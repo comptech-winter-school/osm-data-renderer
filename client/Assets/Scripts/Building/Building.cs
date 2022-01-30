@@ -5,88 +5,61 @@ using UnityEngine;
 /*  «десь пилитс€ здание по пр€мым лини€м
 */
 
-/*  —труктура, представл€юща€ пр€мую линию
- *  я использую Vector2, потому что нам не нужна высота (Y) вершины, ибо это можно вычислить
- *    тому же координаты точек на картах состо€т из 2 чисел
- */
-public struct Line
+namespace OSMDataRenderer
 {
-    public Vector2 start;
-    public Vector2 end;
-    public Line(Vector2 _start, Vector2 _end)
-    {
-        start = _start;
-        end = _end;
-    }
-}
-
-/*   ласс здани€
- */
-public class Building
-{
-    // ¬ысота этажа
-    private const float heightPerLevel = 1.0f;
-
-    // ÷вет пока что захардкожен, в случае чего это можно изменить
-    public static Color Color = new Color(0.3f, 0.3f, 0.3f);
-    public static uint BuilingsNumber = 0;
-
-    public List<Line> lines;
-    public int levels;
-    private List<Vector3> roofVertices = new List<Vector3>();
-
-    public List<Vector3> GetRoofVertices()
-    {
-        return roofVertices;
-    }
-
-    public Building(List<Line> _lines, int _levels)
-    {
-        for (int i = 0; i < _lines.Count; i++)
-        {
-            roofVertices.Add(new Vector3(_lines[i].start.x, heightPerLevel * _levels, _lines[i].start.y));
-        }
-        levels = _levels;
-        lines = _lines;
-    }
-
-    //public static Building CreateFromJSON(string json)
-    //{
-
-    //}
-
-    /*  √енерируем координаты вершин пр€моугольника на основании линии и количества этажей
+    /*  —труктура, представл€юща€ пр€мую линию
+    *  я использую Vector2, потому что нам не нужна высота (Y) вершины, ибо это можно вычислить
+    *    тому же координаты точек на картах состо€т из 2 чисел
     */
-    public Vector3[] generateRect(Line inputLine, int levels)
+    public struct Line
     {
-        float height = levels * heightPerLevel;
-        Vector3[] vertices = new Vector3[8];
-        /*  ¬ершины генерируютс€ не абы как, а в определЄнном пор€дке (это нужно чтобы треугольники задавались нормально)
-         *  ¬от как это прмерно выгл€дит:
-         *  
-         *  2--------3
-         *  |        |
-         *  |        |
-         *  1--------4
-         *  
-         *  “ут цифры означают их пор€док в массиве, он дожлен быть строго таким, чтобы не сбить вычисление нормалей
-         *  “очки 1 и 4 - это концы пр€мой линии (Line.start и Line.end) соответственно
-         */
-        vertices[0].x = inputLine.start.x; vertices[0].y = 0.0f; vertices[0].z = inputLine.start.y;
-        vertices[1].x = inputLine.start.x; vertices[1].y = height; vertices[1].z = inputLine.start.y;
-        vertices[2].x = inputLine.end.x; vertices[2].y = height; vertices[2].z = inputLine.end.y;
-        vertices[3].x = inputLine.end.x; vertices[3].y = 0.0f; vertices[3].z = inputLine.end.y;
+        public Vector2 start;
+        public Vector2 end;
+        public Line(Vector2 _start, Vector2 _end)
+        {
+            start = _start;
+            end = _end;
+        }
+    }
 
-        /*  —оздаЄм вторую пачку вершин с такими же координатам, они будут использоватьс€
-         *  дл€ того чтобы пр€моугольник был виден с двух сторон (если это убрать то пр€моугольник
-         *  будет отображатьс€ лишь с одной стороны, в случае если приложение не выдаст ошибку)
-         *  Ёто происходит из-за т.н. Backface Culling
-        */
-        vertices[4] = vertices[0];
-        vertices[5] = vertices[1];
-        vertices[6] = vertices[2];
-        vertices[7] = vertices[3];
+    /*   ласс здани€
+     */
+    public class Building
+    {
+        // ¬ысота этажа
+        private const float heightPerLevel = 1.0f;
 
-        return vertices;
+        // ÷вет пока что захардкожен, в случае чего это можно изменить
+        public static Color GlobalColor = new Color(0.4f, 0.4f, 0.4f);
+        public static uint BuildingsNumber = 0;
+
+        public uint levels;
+        private List<Vector3> roofVertices = new List<Vector3>();
+        private List<List<Vector3>> walls = new List<List<Vector3>>();
+
+        public List<Vector3> GetRoofVertices()
+        {
+            return roofVertices;
+        }
+        public List<List<Vector3>> GetWallsList()
+        {
+            return walls;
+        }
+
+        public Building(List<Line> _lines, uint _levels)
+        {
+            for (int i = 0; i < _lines.Count; i++)
+            {
+                roofVertices.Add(new Vector3(_lines[i].start.x, heightPerLevel * _levels, _lines[i].start.y));
+                List<Vector3> wall = new List<Vector3>();
+                wall.Add(new Vector3(_lines[i].end.x, 0, _lines[i].end.y));
+                wall.Add(new Vector3(_lines[i].end.x, heightPerLevel * _levels, _lines[i].end.y));
+                wall.Add(new Vector3(_lines[i].start.x, heightPerLevel * _levels, _lines[i].start.y));
+                wall.Add(new Vector3(_lines[i].start.x, 0, _lines[i].start.y));
+                
+                walls.Add(wall);
+            }
+            levels = _levels;
+        }
     }
 }
