@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/* Этот скрипт нужен только для проверки подключения к серверу
+/**
+ * Этот скрипт нужен только для проверки подключения к серверу
  * Он создаёт текстовый объект и на основании того подключен
  * клиент к серверу или нет ставит текст (Connected! или Not connected)
  * 
  * Пока решил не удалять скрипт на всякий случай
-*/
+ */
 
-// Мини-класс для перекидывания данными между скриптами
-
-namespace OSMDataRenderer
+namespace Utilities
 {
+    // Мини-класс для перекидывания данными между скриптами
     public static class TestingHTTPdata
     {
         public static string data = "";

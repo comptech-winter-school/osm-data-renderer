@@ -1,29 +1,32 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using Utilities;
 
-namespace OSMDataRenderer
+// «десь лежит код дл€ подключени€ к серверу
+
+namespace HTTPClient
 {
     public class HTTPClient : MonoBehaviour
     {
-        /* «десь лежит код дл€ подключени€ к серверу
-         * 
-        */
         // Start is called before the first frame update
         void Start()
         {
-            // ≈сли не знаешь про StartCoroutine(), советую почитать, становитс€ более €сно почему функции
-            // общени€ с сервером должны быть устроены именно так как они устроены
+            /** 
+             * ≈сли не знаешь про StartCoroutine(), советую почитать, становитс€ более €сно почему функции
+             * общени€ с сервером должны быть устроены именно так как они устроены
+             */
             StartCoroutine(GetText());
             StartCoroutine(GetFile());
         }
 
         IEnumerator GetText()
         {
-            // «десь ничего сложного с точки зрени€ кода не происходит, достаточно
-            // узнать что такое UnityWebRequest чтобы пон€ть что тут творитс€ 
+            /**
+             * «десь ничего сложного с точки зрени€ кода не происходит, достаточно
+             * узнать что такое UnityWebRequest чтобы пон€ть что тут творитс€ 
+             */
             UnityWebRequest request = UnityWebRequest.Get("http://localhost:5000/test.txt");
             yield return request.SendWebRequest();
 

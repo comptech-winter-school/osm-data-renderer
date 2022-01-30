@@ -1,12 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ProceduralToolkit;
+using BuildingClass;
 
-/* Этот скрипт создаёт одно здание и рисует его
-*/
 
-namespace OSMDataRenderer
+// Этот скрипт создаёт одно здание и рисует его
+
+namespace Generation
 {
     public class GenerateBuilding : MonoBehaviour
     {
