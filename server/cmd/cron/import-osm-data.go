@@ -11,7 +11,14 @@ import (
 	"github.com/qedus/osmpbf"
 )
 
-func WriteInDB(store *osm.Storage, pbfFileName string) error {
+/*
+	При необходимости можно взять .osm.pfb файл
+	И скопировать его в папку ./assets/protobuf
+	Например по ссылке (~16MB):
+	http://download.geofabrik.de/russia/kaliningrad-latest.osm.pbf
+*/
+
+func WritePbfToBD(store *osm.Storage, pbfFileName string) error {
 	const PROTOBUF_PATH = "../assets/protobuf/" // под вынос
 
 	f, err := os.Open(PROTOBUF_PATH + pbfFileName)
