@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/comptech-winter-school/osm-data-renderer/server/cmd/cron"
 	"log"
 	"net/http"
 	"os"
@@ -28,6 +29,8 @@ func main() {
 
 	getuuidHandler := generateuuid.NewHandler(osmStorage)
 
+	cron.WriteInDB(osmStorage, "kaliningrad-latest.osm.pbf")
+	return
 	http.HandleFunc("/generate_uuid", getuuidHandler.Handle)
 	fmt.Printf("Server was started at :%s port\n", applicationPort)
 	http.ListenAndServe(fmt.Sprintf(":%s", applicationPort), nil)
