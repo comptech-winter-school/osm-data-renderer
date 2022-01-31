@@ -30,6 +30,7 @@ _testmain.go
 # IDE system files
 .idea
 .vscode
+.idea/
 
 # vendoring cache directory
 .cache
