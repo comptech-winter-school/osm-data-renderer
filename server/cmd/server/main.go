@@ -1,23 +1,17 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/gofrs/uuid"
-	"github.com/jackc/pgx/v4"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/generateuuid"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/infrastructure/db"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/osm"
+
 	"github.com/joho/godotenv"
 )
-
-const PORT = ":8090"
-
-func hello(w http.ResponseWriter, req *http.Request) {
-	id, _ := uuid.NewGen().NewV4()
-	fmt.Fprintf(w, id.String())
-}
 
 func main() {
 	err := godotenv.Load()
@@ -25,13 +19,16 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
-	if err != nil {
-		log.Fatal("Unable to connect to database")
-	}
-	defer conn.Close(context.Background())
+	applicationPort := os.Getenv("APP_PORT")
 
-	http.HandleFunc("/generate_uuid", hello)
-	fmt.Printf("Server was started at %s port\n", PORT)
-	http.ListenAndServe(PORT, nil)
+	conn := db.OpenDB()
+	defer conn.Close()
+
+	osmStorage := osm.NewStorage(conn)
+
+	getuuidHandler := generateuuid.NewHandler(osmStorage)
+
+	http.HandleFunc("/generate_uuid", getuuidHandler.Handle)
+	fmt.Printf("Server was started at :%s port\n", applicationPort)
+	http.ListenAndServe(fmt.Sprintf(":%s", applicationPort), nil)
 }

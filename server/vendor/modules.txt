@@ -33,6 +33,7 @@ github.com/jackc/pgtype
 ## explicit; go 1.13
 github.com/jackc/pgx/v4
 github.com/jackc/pgx/v4/internal/sanitize
+github.com/jackc/pgx/v4/stdlib
 # github.com/jmoiron/sqlx v1.3.4
 ## explicit; go 1.10
 github.com/jmoiron/sqlx
