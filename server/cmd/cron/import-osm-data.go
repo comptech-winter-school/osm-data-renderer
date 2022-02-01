@@ -12,7 +12,7 @@ import (
 )
 
 //При необходимости можно взять .osm.pfb файл
-//И скопировать его в папку ./assets/protobuf
+//И скопировать его в папку PROTOBUF_PATH из .env
 //Например по ссылке (~16MB):
 //http://download.geofabrik.de/russia/kaliningrad-latest.osm.pbf
 
@@ -43,6 +43,7 @@ func WritePbfToDataBase(store *osm.Storage, pbfFileName string) error {
 		} else {
 			switch v := v.(type) {
 			case *osmpbf.Node:
+				//Под оптимизацию
 				p := osm.Point{
 					Lat: v.Lat,
 					Lon: v.Lon,
@@ -61,10 +62,17 @@ func WritePbfToDataBase(store *osm.Storage, pbfFileName string) error {
 							return err
 						}
 
+						if len(v.NodeIDs) == 0 {
+							return errors.New("empty way")
+						}
+						wayPoint := nodes[v.NodeIDs[0]]
+
 						err = store.UpsertOsmData(context.Background(), osm.OSM{
 							Name:      tg["name"],
 							WayId:     v.ID,
 							Polygon:   string(jsonPoly),
+							Lat:       wayPoint.Lat,
+							Lon:       wayPoint.Lon,
 							CreatedAt: v.Info.Timestamp,
 							UpdatedAt: v.Info.Timestamp,
 						})

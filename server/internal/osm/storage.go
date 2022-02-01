@@ -16,15 +16,15 @@ func NewStorage(db *sqlx.DB) *Storage {
 	return &Storage{db: db}
 }
 
-func (s *Storage) GetOsmData(ctx context.Context, Lat, Lng, RadiusMeters float64) (*[]OSM, error) {
+func (s *Storage) GetOsmData(ctx context.Context, Lat, Lon, RadiusMeters float64) (*[]OSM, error) {
 	var osmData []OSM
 
 	q := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).
 		Select("*").
 		From("osm_data")
 
-	q = q.Where("(earth_box(ll_to_earth(?, ?), ?) @> ll_to_earth(lat, lng))", Lat, Lng, RadiusMeters)
-	q = q.Where("(earth_distance(ll_to_earth(?, ?), ll_to_earth(lat, lng)) < ?)", Lat, Lng, RadiusMeters)
+	q = q.Where("(earth_box(ll_to_earth(?, ?), ?) @> ll_to_earth(lat, lon))", Lat, Lon, RadiusMeters)
+	q = q.Where("(earth_distance(ll_to_earth(?, ?), ll_to_earth(lat, lon)) < ?)", Lat, Lon, RadiusMeters)
 
 	query, args, err := q.ToSql()
 	if err != nil {
@@ -40,7 +40,7 @@ func (s *Storage) GetOsmData(ctx context.Context, Lat, Lng, RadiusMeters float64
 
 func (s *Storage) UpsertOsmData(ctx context.Context, data OSM) error {
 	q := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).
-		Insert("osm_data").Columns("way_id", "name", "polygon", "created_at", "updated_at")
+		Insert("osm_data").Columns("way_id", "name", "polygon", "lat", "lon", "created_at", "updated_at")
 	values, err := data.Values()
 	if err != nil {
 		return fmt.Errorf("getting values for upsert: %w", err)

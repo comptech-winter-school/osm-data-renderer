@@ -8,6 +8,8 @@ type OSM struct {
 	Name      string    `db:"name"`
 	WayId     int64     `db:"way_id"`
 	Polygon   string    `db:"polygon"`
+	Lat       float64   `db:"lat"`
+	Lon       float64   `db:"lon"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
 }
@@ -17,6 +19,8 @@ func (o OSM) Values() ([]interface{}, error) {
 		o.WayId,
 		o.Name,
 		o.Polygon,
+		o.Lat,
+		o.Lon,
 		o.CreatedAt,
 		o.UpdatedAt,
 	}, nil
