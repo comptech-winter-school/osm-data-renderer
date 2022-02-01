@@ -40,13 +40,13 @@ func (s *Storage) GetOsmData(ctx context.Context, Lat, Lng, RadiusMeters float64
 
 func (s *Storage) UpsertOsmData(ctx context.Context, data OSM) error {
 	q := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).
-		Insert("osm_data").Columns("node_id", "name", "lat", "lng", "created_at", "updated_at")
+		Insert("osm_data").Columns("way_id", "name", "polygon", "created_at", "updated_at")
 	values, err := data.Values()
 	if err != nil {
 		return fmt.Errorf("getting values for upsert: %w", err)
 	}
 	q = q.Values(values...)
-	q = q.Suffix("ON CONFLICT (node_id) DO " + //
+	q = q.Suffix("ON CONFLICT (way_id) DO " + //
 		"UPDATE SET updated_at=(now() at time zone 'utc')")
 
 	query, args, err := q.ToSql()

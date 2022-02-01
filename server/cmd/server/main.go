@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/comptech-winter-school/osm-data-renderer/server/cmd/cron"
 	"log"
 	"net/http"
 	"os"
