@@ -45,8 +45,8 @@ func ImportOsmData(store *osm.Storage, pbfFileName string) error {
 			case *osmpbf.Node:
 				//Под оптимизацию
 				p := osm.Point{
-					Lat: v.Lat,
-					Lon: v.Lon,
+					X: v.Lat,
+					Y: v.Lon,
 				}
 				nodes[v.ID] = p
 			case *osmpbf.Way:
@@ -63,11 +63,11 @@ func ImportOsmData(store *osm.Storage, pbfFileName string) error {
 					}
 
 					if wayType != "default" {
-						var poly osm.Polygon
+						var line []osm.Point
 						for _, element := range v.NodeIDs {
-							poly.Vertex = append(poly.Vertex, nodes[element])
+							line = append(line, nodes[element])
 						}
-						jsonPoly, err := json.Marshal(poly)
+						lineString, err := osm.LineToLineString(line)
 						if err != nil {
 							return err
 						}
@@ -81,13 +81,12 @@ func ImportOsmData(store *osm.Storage, pbfFileName string) error {
 							return errors.New("empty way")
 						}
 						wayPoint := nodes[v.NodeIDs[0]]
-
 						err = store.UpsertOsmData(context.Background(), osm.OSM{
 							WayId:     v.ID,
 							Name:      tg["name"],
-							Polygon:   string(jsonPoly),
-							Lat:       wayPoint.Lat,
-							Lon:       wayPoint.Lon,
+							Polygon:   lineString,
+							Lat:       wayPoint.X,
+							Lon:       wayPoint.Y,
 							Tags:      string(jsonTags),
 							Type:      wayType,
 							CreatedAt: v.Info.Timestamp,

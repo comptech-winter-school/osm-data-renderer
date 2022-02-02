@@ -3,8 +3,8 @@ package osm
 import (
 	"context"
 	"fmt"
-
 	sq "github.com/Masterminds/squirrel"
+
 	"github.com/jmoiron/sqlx"
 )
 
