@@ -16,7 +16,7 @@ import (
 //Например по ссылке (~16MB):
 //http://download.geofabrik.de/russia/kaliningrad-latest.osm.pbf
 
-func WritePbfToDataBase(store *osm.Storage, pbfFileName string) error {
+func ImportOsmData(store *osm.Storage, pbfFileName string) error {
 
 	f, err := os.Open(os.Getenv("PROTOBUF_PATH") + pbfFileName)
 	if err != nil {
@@ -52,12 +52,27 @@ func WritePbfToDataBase(store *osm.Storage, pbfFileName string) error {
 			case *osmpbf.Way:
 				if len(v.Tags) > 0 {
 					tg := v.Tags
-					if _, ok := tg["building"]; ok {
+
+					wayType := "default"
+					wayTypeWhiteList := []string{"building", "highway"}
+					for _, s := range wayTypeWhiteList {
+						if _, ok := tg[s]; ok {
+							wayType = s
+							break
+						}
+					}
+
+					if wayType != "default" {
 						var poly osm.Polygon
 						for _, element := range v.NodeIDs {
 							poly.Vertex = append(poly.Vertex, nodes[element])
 						}
 						jsonPoly, err := json.Marshal(poly)
+						if err != nil {
+							return err
+						}
+
+						jsonTags, err := json.Marshal(v.Tags)
 						if err != nil {
 							return err
 						}
@@ -68,11 +83,13 @@ func WritePbfToDataBase(store *osm.Storage, pbfFileName string) error {
 						wayPoint := nodes[v.NodeIDs[0]]
 
 						err = store.UpsertOsmData(context.Background(), osm.OSM{
-							Name:      tg["name"],
 							WayId:     v.ID,
+							Name:      tg["name"],
 							Polygon:   string(jsonPoly),
 							Lat:       wayPoint.Lat,
 							Lon:       wayPoint.Lon,
+							Tags:      string(jsonTags),
+							Type:      wayType,
 							CreatedAt: v.Info.Timestamp,
 							UpdatedAt: v.Info.Timestamp,
 						})

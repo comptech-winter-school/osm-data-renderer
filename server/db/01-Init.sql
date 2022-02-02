@@ -4,6 +4,8 @@ create table if not exists osm_data(
        polygon varchar not null,
        lat double precision not null,
        lon double precision not null,
+       tags varchar not null,
+       type varchar not null,
        created_at timestamp without time zone default (now() at time zone 'utc'),
        updated_at timestamp without time zone default (now() at time zone 'utc')
 );
