@@ -16,7 +16,7 @@ import (
 //Например по ссылке (~16MB):
 //http://download.geofabrik.de/russia/kaliningrad-latest.osm.pbf
 
-func WritePbfToDataBase(store *osm.Storage, pbfFileName string) error {
+func ImportOsmData(store *osm.Storage, pbfFileName string) error {
 
 	f, err := os.Open(os.Getenv("PROTOBUF_PATH") + pbfFileName)
 	if err != nil {
@@ -45,19 +45,34 @@ func WritePbfToDataBase(store *osm.Storage, pbfFileName string) error {
 			case *osmpbf.Node:
 				//Под оптимизацию
 				p := osm.Point{
-					Lat: v.Lat,
-					Lon: v.Lon,
+					X: v.Lat,
+					Y: v.Lon,
 				}
 				nodes[v.ID] = p
 			case *osmpbf.Way:
 				if len(v.Tags) > 0 {
 					tg := v.Tags
-					if _, ok := tg["building"]; ok {
-						var poly osm.Polygon
-						for _, element := range v.NodeIDs {
-							poly.Vertex = append(poly.Vertex, nodes[element])
+
+					wayType := "default"
+					wayTypeWhiteList := []string{"building", "highway"}
+					for _, s := range wayTypeWhiteList {
+						if _, ok := tg[s]; ok {
+							wayType = s
+							break
 						}
-						jsonPoly, err := json.Marshal(poly)
+					}
+
+					if wayType != "default" {
+						var line []osm.Point
+						for _, element := range v.NodeIDs {
+							line = append(line, nodes[element])
+						}
+						lineString, err := osm.LineToLineString(line)
+						if err != nil {
+							return err
+						}
+
+						jsonTags, err := json.Marshal(v.Tags)
 						if err != nil {
 							return err
 						}
@@ -66,13 +81,14 @@ func WritePbfToDataBase(store *osm.Storage, pbfFileName string) error {
 							return errors.New("empty way")
 						}
 						wayPoint := nodes[v.NodeIDs[0]]
-
 						err = store.UpsertOsmData(context.Background(), osm.OSM{
-							Name:      tg["name"],
 							WayId:     v.ID,
-							Polygon:   string(jsonPoly),
-							Lat:       wayPoint.Lat,
-							Lon:       wayPoint.Lon,
+							Name:      tg["name"],
+							Polygon:   lineString,
+							Lat:       wayPoint.X,
+							Lon:       wayPoint.Y,
+							Tags:      string(jsonTags),
+							Type:      wayType,
 							CreatedAt: v.Info.Timestamp,
 							UpdatedAt: v.Info.Timestamp,
 						})
