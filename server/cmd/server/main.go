@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/api_v1"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/general"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/generateuuid"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/infrastructure/db"
-	"github.com/comptech-winter-school/osm-data-renderer/server/internal/osm"
-
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
 
@@ -24,11 +24,11 @@ func main() {
 	conn := db.OpenDB()
 	defer conn.Close()
 
-	osmStorage := osm.NewStorage(conn)
+	//osmStorage := osm.NewStorage(conn)
 
-	getuuidHandler := generateuuid.NewHandler(osmStorage)
-
-	http.HandleFunc("/generate_uuid", getuuidHandler.Handle)
-	fmt.Printf("Server was started at :%s port\n", applicationPort)
-	http.ListenAndServe(fmt.Sprintf(":%s", applicationPort), nil)
+	r := mux.NewRouter()
+	r.HandleFunc("/ping", general.Ping).Methods("GET")
+	r.HandleFunc("/apiv1/config", api_v1.GetConfig).Methods("GET")
+	r.HandleFunc("/apiv1/objects", api_v1.GetObjects).Methods("POST")
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", applicationPort), r))
 }
