@@ -1,6 +1,5 @@
-Как запустить postgres:
-docker-compose up
-
-Как запустить приложение:
+Как запустить приложение и postgres:
 Скопировать .env-example и переименовать его в .env
-Выполнить команду go run main.go в директории ./cmd
+Выполнить команду docker-compose up --build
+
+
