@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ProceduralToolkit;
 using BuildingClass;
-
+using TerrainGeneration;
 
 // Ётот скрипт создаЄт одно здание и рисует его
 
@@ -22,15 +22,15 @@ namespace Generation
                 MeshRenderer wallRenderer;
                 wallRenderer = wallGo.AddComponent<MeshRenderer>();
                 var wallFilter = wallGo.AddComponent<MeshFilter>();
-                wallRenderer.sharedMaterial = new Material(Shader.Find("Standard"));
-                wallRenderer.sharedMaterial.color = Building.GlobalColor;
+                wallRenderer.material = Resources.Load("BuildingMaterial", typeof(Material)) as Material;
 
                 Mesh wall = new Mesh();
-
                 Tessellator tessellator = new Tessellator();
                 tessellator.AddContour(building.GetWallsList()[i]);
                 tessellator.Tessellate();
                 wall = tessellator.ToMesh();
+                wall.RecalculateNormals();
+                wall.RecalculateUVDistributionMetrics();
 
                 wallFilter.mesh = wall;
 
@@ -48,8 +48,7 @@ namespace Generation
             var roofRenderer = roofGo.AddComponent<MeshRenderer>();
             var roofFilter = roofGo.AddComponent<MeshFilter>();
 
-            roofRenderer.sharedMaterial = new Material(Shader.Find("Standard"));
-            roofRenderer.sharedMaterial.color = Building.GlobalColor;
+            roofRenderer.material = Resources.Load("BuildingMaterial", typeof(Material)) as Material;
 
             Mesh roof = new Mesh();
 
@@ -59,6 +58,7 @@ namespace Generation
             tessellator.Tessellate();
             roof = tessellator.ToMesh();
             roof.RecalculateNormals();
+            roof.RecalculateUVDistributionMetrics();
 
             roofFilter.mesh = roof;
 
@@ -81,40 +81,51 @@ namespace Generation
                 Destroy(mf.gameObject);
             }
 
-            GameObject buildingGo = new GameObject();
+            GameObject buildingGo = Instantiate(new GameObject());
             MeshRenderer buildingMR = buildingGo.AddComponent<MeshRenderer>();
-            buildingMR.sharedMaterial = new Material(Shader.Find("Standard"));
-            buildingMR.sharedMaterial.color = Building.GlobalColor;
-            MeshFilter buildngMF = buildingGo.AddComponent<MeshFilter>();
-            buildngMF.mesh = new Mesh();
-            buildngMF.mesh.CombineMeshes(combine);
+            buildingMR.material = Resources.Load("BuildingMaterial", typeof(Material)) as Material;
+            MeshFilter buildingMF = buildingGo.AddComponent<MeshFilter>();
+            buildingMF.mesh = new Mesh();
+            buildingMF.mesh.CombineMeshes(combine);
+            buildingMF.mesh.RecalculateNormals();
+            buildingMF.mesh.RecalculateUVDistributionMetrics();
             Building.BuildingsNumber++;
             buildingGo.name = "building" + Building.BuildingsNumber;
             buildingGo.SetActive(true);
+
+            float minDistance = Building.heightPerLevel * levels + TerrainGenerator.maxHeight;
+            buildingMF.mesh.Move(new Vector3(0.0f, minDistance, 0.0f));
+            RaycastHit hit;
+            for (int i = 0; i < buildingMF.mesh.vertices.Length; i++)
+            {
+                Ray ray = new Ray(buildingMF.mesh.vertices[i], Vector3.down);
+                if (Physics.Raycast(ray, out hit))
+                    {
+                    if (hit.distance < minDistance)
+                        minDistance = hit.distance;
+                }
+            }
+            buildingMF.mesh.Move(new Vector3(0.0f, -minDistance - Building.heightPerLevel, 0.0f));
 
             return buildingGo;
         }
 
         // ѕол€ дл€ упрощени€ тестинга (в редакторе можно настроить координаты точек и кол-во этажей)
-        [SerializeField] public Vector2 point1;
-        [SerializeField] public Vector2 point2;
-        [SerializeField] public Vector2 point3;
-        [SerializeField] public Vector2 point4;
         [SerializeField] public uint levels;
 
         // Start is called before the first frame update
         void Start()
         {
-            // —оздание линий из 4 вершин
-            List<Line> myLines = new List<Line>();
-            myLines.Add(new Line(point1, point2));
-            myLines.Add(new Line(point2, point3));
-            myLines.Add(new Line(point3, point4));
-            myLines.Add(new Line(point4, point1));
 
-            Building b = new Building(myLines, levels);
+            Point[] pnts = new Point[4];
+            pnts[0] = new Point(20.0f, 30.0f);
+            pnts[1] = new Point(20.0f, 35.0f);
+            pnts[2] = new Point(25.0f, 35.0f);
+            pnts[3] = new Point(25.0f, 30.0f);
 
-            createBuilding(b).transform.parent = gameObject.transform;
+            Building b1 = new Building(pnts, levels);
+
+            createBuilding(b1).transform.parent = gameObject.transform;
         }
 
 
