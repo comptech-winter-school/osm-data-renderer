@@ -1,14 +1,24 @@
-version: '3.5'
-
+version: "3"
 services:
-  postgres:
-    container_name: postgres_container
-    image: postgres
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+  back:
+    build: .
+    image: server:1.0
+    networks:
+        - default
     ports:
-      - "5432:5432"
-    restart: unless-stopped
+        - "8090:8090"
+    depends_on:
+        - database
+  database:
+    image: postgis/postgis
+    restart: always
+    hostname: osm-database
+    env_file:
+        - db/vars_db.env
+    ports:
+        - "5431:5432"
+    networks:
+        - default
+    volumes:
+        - ./db/01-Init.sql:/docker-entrypoint-initdb.d/init.sql
+        - ./postgres-data:/var/lib/postgresql/data
