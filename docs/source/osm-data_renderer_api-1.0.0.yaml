@@ -1,0 +1,137 @@
+---
+openapi: 3.0.2
+info:
+  title: osm-data-renderer-api
+  description: ""
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /config:
+    get:
+      tags:
+      - config
+      summary: Получение конфигурации
+      operationId: getConfig
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Config'
+  /objects:
+    post:
+      tags:
+      - objects
+      summary: Получение данных о строениях и дорогах
+      requestBody:
+        $ref: '#/components/requestBodies/Objects'
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Objects'
+  /tettain:
+    post:
+      tags:
+      - tettain
+      summary: Получение данных о ландшафте
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tettain'
+components:
+  schemas:
+    Config:
+      properties:
+        nullBuildingHeight:
+          type: integer
+          format: int32
+    Tettain:
+      properties:
+        highmap:
+          type: string
+          format: base64
+          default: base64
+        size:
+          $ref: '#/components/schemas/Size'
+        border:
+          $ref: '#/components/schemas/Border'
+    Size:
+      properties:
+        height:
+          type: integer
+          format: uint
+        width:
+          type: integer
+          format: uint
+    Border:
+      properties:
+        x_min:
+          type: number
+          format: float
+        y_min:
+          type: number
+          format: float
+        x_max:
+          type: number
+          format: float
+        y_max:
+          type: number
+          format: float
+    Objects:
+      properties:
+        buildings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Building'
+        highways:
+          type: array
+          items:
+            $ref: '#/components/schemas/Highway'
+    Building:
+      properties:
+        levels:
+          type: integer
+          format: uint
+          nullable: true
+        polygon:
+          type: array
+          items:
+            $ref: '#/components/schemas/Position'
+    Highway:
+      type: array
+      items:
+        $ref: '#/components/schemas/Position'
+    Position:
+      properties:
+        x:
+          type: number
+          format: float
+        y:
+          type: number
+          format: float
+  requestBodies:
+    Objects:
+      description: ""
+      content:
+        application/json:
+          schema:
+            properties:
+              position:
+                $ref: '#/components/schemas/Position'
+              radius:
+                type: integer
+                format: uint
+      required: true
