@@ -13,18 +13,14 @@ public class Request
         position = _position;
         radius = _radius;
     }
-    public Request()
-    {
-
-    }
     public static void encode(Request req)
     {
         string str = JsonUtility.ToJson(req, true);
         File.WriteAllText(Path.Combine(Application.dataPath, "Resources/request.json"), str);
     }
 
-    public string encode()
+    public void encode()
     {
-        return JsonUtility.ToJson(this);
+        Request.encode(this);
     }
 }

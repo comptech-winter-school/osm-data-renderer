@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using BuildingClass;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -21,13 +20,8 @@ public class CameraMovement : MonoBehaviour
         Request req = new Request(new Point(transform.position.x, transform.position.z), 200);
         req.encode();
 
-        Point[] pnts = new Point[4];
-        pnts[0] = new Point(40.0f, 50.0f);
-        pnts[1] = new Point(40.0f, 55.0f);
-        pnts[2] = new Point(45.0f, 55.0f);
-        pnts[3] = new Point(45.0f, 50.0f);
-
-        Response resp;
+        //Response resp = Response.createResponse(Path.Combine(Application.dataPath, "Resources/response.json"));
+        //Debug.Log("resp created");
     }
 
     // Update is called once per frame
