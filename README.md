@@ -16,7 +16,10 @@ OpenStreetMap и клиентское Unity-приложение, которое
 
 ## Куратор
 
-Антон Киреев – TechLead, Avito
+| [<img src="https://avatars.githubusercontent.com/u/936289?v=4" width="75">](https://github.com/small-jeeper)<br>[Anthony Kireev](https://github.com/small-jeeper) |
+|---|
+| Антон Киреев |
+| TechLead, Avito |
 
 ## Команда
 
