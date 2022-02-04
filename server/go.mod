@@ -11,7 +11,8 @@ require (
 )
 
 require (
-	github.com/cridenour/go-postgis v1.0.0
+	github.com/cridenour/go-postgis v1.0.0 // indirect
+	github.com/gorilla/mux v1.8.0
 	github.com/jackc/pgx v3.6.2+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/qedus/osmpbf v1.2.0

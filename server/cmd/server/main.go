@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/api_v1"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/general"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/osm"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/generateuuid"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/infrastructure/db"
-	"github.com/comptech-winter-school/osm-data-renderer/server/internal/osm"
-
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
 
@@ -25,10 +26,12 @@ func main() {
 	defer conn.Close()
 
 	osmStorage := osm.NewStorage(conn)
+	api_v1_handler := api_v1.NewHandler(osmStorage)
 
-	getuuidHandler := generateuuid.NewHandler(osmStorage)
-
-	http.HandleFunc("/generate_uuid", getuuidHandler.Handle)
-	fmt.Printf("Server was started at :%s port\n", applicationPort)
-	http.ListenAndServe(fmt.Sprintf(":%s", applicationPort), nil)
+	r := mux.NewRouter()
+	r.HandleFunc("/ping", general.Ping).Methods("GET")
+	r.HandleFunc("/apiv1/config", api_v1.GetConfig).Methods("GET")
+	r.HandleFunc("/apiv1/objects", api_v1_handler.GetObjects).Methods("POST")
+	r.HandleFunc("/apiv1/heightmap", api_v1.GetHeightMap).Methods("POST")
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", applicationPort), r))
 }
