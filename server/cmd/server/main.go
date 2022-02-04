@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/api_v1"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/general"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/osm"
 	"log"
 	"net/http"
 	"os"
@@ -24,12 +25,13 @@ func main() {
 	conn := db.OpenDB()
 	defer conn.Close()
 
-	//osmStorage := osm.NewStorage(conn)
+	osmStorage := osm.NewStorage(conn)
+	api_v1_handler := api_v1.NewHandler(osmStorage)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/ping", general.Ping).Methods("GET")
 	r.HandleFunc("/apiv1/config", api_v1.GetConfig).Methods("GET")
-	r.HandleFunc("/apiv1/objects", api_v1.GetObjects).Methods("POST")
+	r.HandleFunc("/apiv1/objects", api_v1_handler.GetObjects).Methods("POST")
 	r.HandleFunc("/apiv1/heightmap", api_v1.GetHeightMap).Methods("POST")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", applicationPort), r))
 }

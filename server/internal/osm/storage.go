@@ -20,18 +20,20 @@ func (s *Storage) GetOsmData(ctx context.Context, Lat, Lon, RadiusMeters float64
 	var osmData []OSM
 
 	q := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).
-		Select("*").
+		Select("way_id, name, ST_AsText(polygon) AS polygon, lat, lon, tags, type").
 		From("osm_data")
 
-	q = q.Where("(earth_box(ll_to_earth(?, ?), ?) @> ll_to_earth(lat, lon))", Lat, Lon, RadiusMeters)
-	q = q.Where("(earth_distance(ll_to_earth(?, ?), ll_to_earth(lat, lon)) < ?)", Lat, Lon, RadiusMeters)
+	latR, lonR := RadiusMeters/111319.0, RadiusMeters/111134.0
+
+	q = q.Where(sq.And{sq.GtOrEq{"lat": Lat - latR}, sq.LtOrEq{"lat": Lat + latR}})
+	q = q.Where(sq.And{sq.GtOrEq{"lon": Lon - lonR}, sq.LtOrEq{"lon": Lon + lonR}})
 
 	query, args, err := q.ToSql()
 	if err != nil {
 		return nil, err
 	}
 
-	err = s.db.SelectContext(ctx, osmData, query, args...)
+	err = s.db.SelectContext(ctx, &osmData, query, args...)
 	if err != nil {
 		return nil, err
 	}

@@ -1,27 +1,72 @@
 package api_v1
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/api_v1/model"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/osm"
 	"io/ioutil"
 	"log"
-	"math"
 	"net/http"
+	"strconv"
 )
 
-func GetObjectData(lat, lon, radius float32) ([]model.Building, [][]model.Point, error) {
-	p1, p2, p3, p4 := model.Point{0, 0}, model.Point{1, 0}, model.Point{0, 1}, model.Point{0, 0}
-	b1 := model.Building{Levels: 4, Polygon: []model.Point{p1, p2, p3, p4}}
-	b2 := model.Building{Polygon: []model.Point{p4, p2, p3, {1, 1}, p4}}
-
-	hw1 := []model.Point{p1, p2, p3}
-	hw2 := []model.Point{p2, p3, p1}
-
-	return []model.Building{b1, b2}, [][]model.Point{hw1, hw2}, nil
+type storage interface {
+	GetOsmData(ctx context.Context, Lat, Lng, RadiusMeters float64) (*[]osm.OSM, error)
 }
 
-func GetObjects(w http.ResponseWriter, r *http.Request) {
+type Handler struct {
+	storage storage
+}
+
+func NewHandler(storage storage) *Handler {
+	return &Handler{storage: storage}
+}
+
+func GetObjectData(h *Handler, lat, lon, radius float32) ([]model.Building, []model.Highways, error) {
+	osmData, err := h.storage.GetOsmData(context.Background(), float64(lat), float64(lon), float64(radius))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var buildings []model.Building
+	var highways []model.Highways
+	for _, o := range *osmData {
+		poly, err := osm.LineStringToLine(o.Polygon)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		var tags map[string]string
+		err = json.Unmarshal([]byte(o.Tags), &tags)
+		if err != nil {
+			return nil, nil, err
+		}
+		if o.Type == "building" {
+			building := model.Building{
+				Polygon: poly,
+			}
+			if len(tags["building:levels"]) > 0 {
+				in, err := strconv.Atoi(tags["building:levels"])
+				if err != nil {
+					return nil, nil, err
+				}
+				building.Levels = uint(in)
+			}
+			buildings = append(buildings, building)
+		} else if o.Type == "highway" {
+
+			highways = append(highways, model.Highways{
+				Polygon: poly,
+			})
+		}
+	}
+
+	return buildings, highways, nil
+}
+
+func (h *Handler) GetObjects(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	body, err := ioutil.ReadAll(r.Body)
@@ -44,14 +89,7 @@ func GetObjects(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if (math.Abs(float64(t.Position.Y))+float64(t.Radius) > 85) ||
-		(math.Abs(float64(t.Position.X))+float64(t.Radius) > 180) {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Print(err)
-		return
-	}
-
-	buildings, highways, err := GetObjectData(t.Position.X, t.Position.Y, t.Radius)
+	buildings, highways, err := GetObjectData(h, t.Position.X, t.Position.Y, t.Radius)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Print(err)

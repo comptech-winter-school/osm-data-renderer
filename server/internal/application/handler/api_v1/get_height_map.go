@@ -6,14 +6,11 @@ import (
 	"github.com/comptech-winter-school/osm-data-renderer/server/pkg/utils/FileToBase64Encoding"
 	"log"
 	"net/http"
-)
-
-const (
-	pathToHeightMaps = "D:\\GoLand\\Projects\\osm-data-render\\osm-data-renderer\\server\\assets\\heightmaps\\raw"
+	"os"
 )
 
 func GetFileNameByLatLonRadius(lat, lon, radius float32) string {
-	return pathToHeightMaps + "\\srtm_44_01.asc"
+	return os.Getenv("HIGHMAP_PATH") + "srtm_44_01.asc"
 }
 
 func GetHeightMapResponse(lat, lon, radius float32) model.HeightMapResponse {

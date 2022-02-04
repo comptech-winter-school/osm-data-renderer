@@ -10,9 +10,13 @@ type Building struct {
 	Polygon []Point `json:"polygon"`
 }
 
+type Highways struct {
+	Polygon []Point `json:"polygon"`
+}
+
 type GetObjectsResponse struct {
 	Buildings []Building `json:"buildings"`
-	Highways  [][]Point  `json:"highways"`
+	Highways  []Highways `json:"highways"`
 }
 
 type GetObjectsRequest struct {
