@@ -1,8 +1,13 @@
 # github.com/Masterminds/squirrel v1.5.2
+## explicit
 github.com/Masterminds/squirrel
+# github.com/cridenour/go-postgis v1.0.0
+## explicit
 # github.com/gofrs/uuid v4.2.0+incompatible
+## explicit
 github.com/gofrs/uuid
 # github.com/gorilla/mux v1.8.0
+## explicit
 github.com/gorilla/mux
 # github.com/jackc/chunkreader/v2 v2.0.1
 github.com/jackc/chunkreader/v2
@@ -20,25 +25,35 @@ github.com/jackc/pgproto3/v2
 github.com/jackc/pgservicefile
 # github.com/jackc/pgtype v1.9.1
 github.com/jackc/pgtype
+# github.com/jackc/pgx v3.6.2+incompatible
+## explicit
 # github.com/jackc/pgx/v4 v4.14.1
+## explicit
 github.com/jackc/pgx/v4
 github.com/jackc/pgx/v4/internal/sanitize
 github.com/jackc/pgx/v4/stdlib
 # github.com/jmoiron/sqlx v1.3.4
+## explicit
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
 # github.com/joho/godotenv v1.4.0
+## explicit
 github.com/joho/godotenv
 # github.com/lann/builder v0.0.0-20180802200727-47ae307949d0
 github.com/lann/builder
 # github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0
 github.com/lann/ps
+# github.com/pkg/errors v0.9.1
+## explicit
 # github.com/qedus/osmpbf v1.2.0
+## explicit
 github.com/qedus/osmpbf
 github.com/qedus/osmpbf/OSMPBF
 # golang.org/x/crypto v0.0.0-20220128200615-198e4374d7ed
+## explicit
 golang.org/x/crypto/pbkdf2
 # golang.org/x/text v0.3.7
+## explicit
 golang.org/x/text/cases
 golang.org/x/text/internal
 golang.org/x/text/internal/language

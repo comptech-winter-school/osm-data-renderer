@@ -30,5 +30,6 @@ func main() {
 	r.HandleFunc("/ping", general.Ping).Methods("GET")
 	r.HandleFunc("/apiv1/config", api_v1.GetConfig).Methods("GET")
 	r.HandleFunc("/apiv1/objects", api_v1.GetObjects).Methods("POST")
+	r.HandleFunc("/apiv1/heightmap", api_v1.GetHeightMap).Methods("POST")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", applicationPort), r))
 }
