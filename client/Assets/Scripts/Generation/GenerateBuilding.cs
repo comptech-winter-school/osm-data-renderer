@@ -10,7 +10,7 @@ namespace Generation
 {
     public class GenerateBuilding : MonoBehaviour
     {
-        List<GameObject> createWalls(Building building)
+        static List<GameObject> createWalls(Building building)
         {
             List<GameObject> walls = new List<GameObject>();
 
@@ -40,7 +40,7 @@ namespace Generation
             return walls;
         }
 
-        GameObject createRoof(Building building)
+        static GameObject createRoof(Building building)
         {
             GameObject roofGo = new GameObject();
             roofGo.name = "roof";
@@ -65,7 +65,7 @@ namespace Generation
             return roofGo;
         }
 
-        GameObject createBuilding(Building building)
+        public static GameObject createBuilding(Building building)
         {
             // Ниже создаётся уже сам GameObject здания и также проводится объединение мешей для этого
 
@@ -89,11 +89,11 @@ namespace Generation
             buildingMF.mesh.CombineMeshes(combine);
             buildingMF.mesh.RecalculateNormals();
             buildingMF.mesh.RecalculateUVDistributionMetrics();
-            Building.BuildingsNumber++;
-            buildingGo.name = "building" + Building.BuildingsNumber;
+            Building.incrementBuildingsNumber();
+            buildingGo.name = "building" + Building.getBuildingsNumber();
             buildingGo.SetActive(true);
 
-            float minDistance = Building.heightPerLevel * levels + TerrainGenerator.maxHeight;
+            float minDistance = Building.getHeight() * building.levels + TerrainGenerator.maxHeight;
             buildingMF.mesh.Move(new Vector3(0.0f, minDistance, 0.0f));
             RaycastHit hit;
             for (int i = 0; i < buildingMF.mesh.vertices.Length; i++)
@@ -105,7 +105,9 @@ namespace Generation
                         minDistance = hit.distance;
                 }
             }
-            buildingMF.mesh.Move(new Vector3(0.0f, -minDistance - Building.heightPerLevel, 0.0f));
+            buildingMF.mesh.Move(new Vector3(0.0f, -minDistance - Building.getHeight(), 0.0f));
+
+            buildingGo.transform.Translate(new Vector3(0.0f, 0.01f, 0.0f));
 
             return buildingGo;
         }
@@ -117,15 +119,6 @@ namespace Generation
         void Start()
         {
 
-            Point[] pnts = new Point[4];
-            pnts[0] = new Point(20.0f, 30.0f);
-            pnts[1] = new Point(20.0f, 35.0f);
-            pnts[2] = new Point(25.0f, 35.0f);
-            pnts[3] = new Point(25.0f, 30.0f);
-
-            Building b1 = new Building(pnts, levels);
-
-            createBuilding(b1).transform.parent = gameObject.transform;
         }
 
 

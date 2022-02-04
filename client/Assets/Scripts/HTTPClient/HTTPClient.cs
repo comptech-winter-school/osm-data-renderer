@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -6,58 +7,48 @@ using Utilities;
 
 // «десь лежит код дл€ подключени€ к серверу
 
-namespace HTTPClient
+namespace HTTPClientNamespace
 {
     public class HTTPClient : MonoBehaviour
     {
+        public static bool isRequestSent = false;
+        const string serverURL = "http://localhost:5000";
+
         // Start is called before the first frame update
         void Start()
         {
-            /** 
-             * ≈сли не знаешь про StartCoroutine(), советую почитать, становитс€ более €сно почему функции
-             * общени€ с сервером должны быть устроены именно так как они устроены
-             */
-            StartCoroutine(GetText());
-            StartCoroutine(GetFile());
+            //StartCoroutine(GetText());
+            //StartCoroutine(GetFile());
         }
 
-        IEnumerator GetText()
+        public static IEnumerator SendRequest(Request request)
         {
-            /**
-             * «десь ничего сложного с точки зрени€ кода не происходит, достаточно
-             * узнать что такое UnityWebRequest чтобы пон€ть что тут творитс€ 
-             */
-            UnityWebRequest request = UnityWebRequest.Get("http://localhost:5000/test.txt");
-            yield return request.SendWebRequest();
-
-            if (request.result != UnityWebRequest.Result.Success)
+            if (isRequestSent)
             {
-                Debug.Log(request.error);
+                yield return null;
+            }
+
+            isRequestSent = true;
+
+            var uwr = new UnityWebRequest(serverURL, "POST");
+            byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(request.encode());
+            uwr.uploadHandler = new UploadHandlerRaw(jsonToSend);
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            uwr.SetRequestHeader("Content-Type", "application/json");
+
+            //Send the request then wait here until it returns
+            yield return uwr.SendWebRequest();
+
+            if (uwr.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log("Error While Sending: " + uwr.error);
+                isRequestSent = false;
             }
             else
             {
-                TestingHTTPdata.setData(request.downloadHandler.text);
-
-                Debug.Log("Finished getting data");
-            }
-        }
-
-        IEnumerator GetFile()
-        {
-            // “о же самое, что и с GetText()
-            UnityWebRequest request = new UnityWebRequest("http://localhost:5000/test.json", UnityWebRequest.kHttpVerbGET);
-            string path = Path.Combine(Application.dataPath, "Resources/test.json");
-            request.downloadHandler = new DownloadHandlerFile(path);
-
-            yield return request.SendWebRequest();
-
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Debug.Log(request.error);
-            }
-            else
-            {
-                Debug.Log("Successfully downloaded and saved to " + path);
+                Debug.Log("Received: " + uwr.downloadHandler.text);
+                Chunks.response = Response.fromJson(uwr.downloadHandler.text);
+                isRequestSent = false;
             }
         }
     }
