@@ -1,15 +1,75 @@
-package cron
+package main
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/infrastructure/db"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/osm"
+	"github.com/joho/godotenv"
 	"github.com/qedus/osmpbf"
 	"io"
+	"log"
+	"net/http"
 	"os"
 	"runtime"
 )
+
+func downloadFile(filepath string, url string) (err error) {
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Writer the body to file
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+const pbfFileName = "kaliningrad-latest.osm.pbf"
+const downloadBaseUrl = "http://download.geofabrik.de/russia/"
+
+func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	conn := db.OpenDB()
+	defer conn.Close()
+
+	log.Println("Start downloading...")
+	err = downloadFile(os.Getenv("PROTOBUF_PATH")+pbfFileName, downloadBaseUrl+pbfFileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Downloading finished")
+
+	osmStorage := osm.NewStorage(conn)
+	log.Println("Start importing...")
+	err = ImportOsmData(osmStorage, pbfFileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Done")
+
+	err = os.Remove(os.Getenv("PROTOBUF_PATH") + pbfFileName)
+	log.Println("Temp files deleted")
+}
 
 //При необходимости можно взять .osm.pfb файл
 //И скопировать его в папку PROTOBUF_PATH из .env

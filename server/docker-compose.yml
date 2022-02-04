@@ -4,21 +4,21 @@ services:
     build: .
     image: server:1.0
     networks:
-      - default
+        - default
     ports:
-      - "8090:8090"
+        - "8090:8090"
     depends_on:
-      - database
+        - database
   database:
     image: postgis/postgis
     restart: always
     hostname: osm-database
     env_file:
-      - db/vars_db.env
+        - db/vars_db.env
     ports:
-      - "5431:5432"
+        - "5431:5432"
     networks:
-      - default
+        - default
     volumes:
-      - ./db/01-Init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./postgres-data:/var/lib/postgresql/data
+        - ./db/01-Init.sql:/docker-entrypoint-initdb.d/init.sql
+        - ./postgres-data:/var/lib/postgresql/data
