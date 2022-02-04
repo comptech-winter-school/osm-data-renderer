@@ -26,7 +26,6 @@ _testmain.go
 *.prof
 
 .env
-osm-renderer-server
 
 # IDE system files
 .idea
