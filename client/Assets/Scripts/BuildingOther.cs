@@ -4,8 +4,8 @@ using UnityEngine;
 using System;
 
 [Serializable]
-public class Highway
+public class BuildingOther
 {
     Tags tags;
-    Point[] line;
+    Point[] polygon;
 }

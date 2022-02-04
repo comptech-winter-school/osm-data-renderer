@@ -1,23 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 // Здесь пилится здание по прямым линиям
 
 namespace BuildingClass
 {
     // Класс здания
-    [Serializable]
+
     public class Building
     {
         // Высота этажа
-        private static float heightPerLevel = 0.25f * 2.7f;
-        private static uint BuildingsNumber = 0;
+        public const float heightPerLevel = 0.25f * 2.7f;
+        public static uint BuildingsNumber = 0;
         private List<Vector3> roof = new List<Vector3>();
         private List<List<Vector3>> walls = new List<List<Vector3>>();
         public uint levels;
-        public Point[] polygon;
 
         public List<Vector3> GetRoofVertices()
         {
@@ -27,41 +25,21 @@ namespace BuildingClass
         {
             return walls;
         }
-        public static float getHeight()
-        {
-            return heightPerLevel;
-        }
-        public static uint getBuildingsNumber()
-        {
-            return BuildingsNumber;
-        }
-        public static void incrementBuildingsNumber()
-        {
-            BuildingsNumber++;
-        }
 
         public Building(Point[] points, uint _levels)
         {
-            polygon = points;
-            levels = _levels;
-
-            this.setup();
-        }
-
-        public void setup()
-        {
-            //this = new Building(polygon, levels);
-            levels++;
-            for (int i = 0; i < polygon.Length; i++)
+            _levels++;
+            for (int i = 0; i < points.Length; i++)
             {
-                roof.Add(new Vector3(polygon[i].x, heightPerLevel * levels, polygon[i].y));
+                roof.Add(new Vector3(points[i].x, heightPerLevel * _levels, points[i].y));
                 List<Vector3> wall = new List<Vector3>();
-                wall.Add(new Vector3(polygon[(i + 1) % polygon.Length].x, 0, polygon[(i + 1) % polygon.Length].y));
-                wall.Add(new Vector3(polygon[(i + 1) % polygon.Length].x, heightPerLevel * levels, polygon[(i + 1) % polygon.Length].y));
-                wall.Add(new Vector3(polygon[i].x, heightPerLevel * levels, polygon[i].y));
-                wall.Add(new Vector3(polygon[i].x, 0, polygon[i].y));
+                wall.Add(new Vector3(points[(i + 1) % points.Length].x, 0, points[(i + 1) % points.Length].y));
+                wall.Add(new Vector3(points[(i + 1) % points.Length].x, heightPerLevel * _levels, points[(i + 1) % points.Length].y));
+                wall.Add(new Vector3(points[i].x, heightPerLevel * _levels, points[i].y));
+                wall.Add(new Vector3(points[i].x, 0, points[i].y));
                 walls.Add(wall);
             }
+            levels = _levels;
         }
     }
 }
