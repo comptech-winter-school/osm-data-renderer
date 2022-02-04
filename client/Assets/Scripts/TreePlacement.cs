@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-public class tree_placement : MonoBehaviour
+public class TreePlacement : MonoBehaviour
 {
 
     public GameObject AllTrees;
