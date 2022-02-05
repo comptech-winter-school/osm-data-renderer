@@ -37,7 +37,11 @@ func StrToFloat(str string) (float32, error) {
 }
 
 func LineStringToLine(lineString string) ([]model.Point, error) {
-	lineString = lineString[11 : len(lineString)-1]
+	const (
+		lineStringPrefixSize  = 11
+		lineStringPostfixSize = 1
+	)
+	lineString = lineString[lineStringPrefixSize : len(lineString)-lineStringPostfixSize]
 	stringPoints := strings.Split(lineString, ",")
 	var points []model.Point
 	for _, stringPoint := range stringPoints {

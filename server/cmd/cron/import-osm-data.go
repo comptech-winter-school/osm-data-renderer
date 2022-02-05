@@ -21,7 +21,7 @@ const (
 	pbfFilenameArgName        = "pbf_name"
 	pbfDefaultBaseDownloadUrl = "http://download.geofabrik.de/russia/"
 	pbfBaseDownloadUrlUsage   = "base download url"
-	pbfDefaultName            = "kaliningrad-latest.osm.pbf"
+	pbfDefaultFileName        = "kaliningrad-latest.osm.pbf"
 	pbfFileNameUsage          = "pbf file name (central-fed-district-latest.osm.pbf for Moscow)"
 )
 
@@ -30,7 +30,7 @@ func main() {
 	var downloadBaseUrl string
 
 	flag.StringVar(&downloadBaseUrl, pbfBaseUrlArgName, pbfDefaultBaseDownloadUrl, pbfBaseDownloadUrlUsage)
-	flag.StringVar(&pbfFileName, pbfFilenameArgName, pbfDefaultName, pbfFileNameUsage)
+	flag.StringVar(&pbfFileName, pbfFilenameArgName, pbfDefaultFileName, pbfFileNameUsage)
 	flag.Parse()
 
 	err := godotenv.Load()

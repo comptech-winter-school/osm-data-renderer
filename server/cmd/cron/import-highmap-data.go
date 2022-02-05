@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	fileSystem "github.com/comptech-winter-school/osm-data-renderer/server/pkg/utils/file-system"
+	filesystem "github.com/comptech-winter-school/osm-data-renderer/server/pkg/utils/file-system"
 	"github.com/joho/godotenv"
 	"log"
 	"os"
@@ -15,7 +15,7 @@ const (
 
 	heightmapFilenameArgName = "hm_name"
 	heightmapDefaultFileName = "srtm_41_02.zip"
-	heightmapFilenameUsage   = "zip heightmap data file name (srtm_44_01.zip for Moscow)"
+	heightmapFileNameUsage   = "zip heightmap data file name (srtm_44_01.zip for Moscow)"
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 	var heightmapDownloadBaseUrl string
 
 	flag.StringVar(&heightmapDownloadBaseUrl, heightmapBaseUrlArgName, heightmapDefaultDownloadBaseUrl, heightmapBaseUrlUsage)
-	flag.StringVar(&heightmapFileName, heightmapFilenameArgName, heightmapDefaultFileName, heightmapFilenameUsage)
+	flag.StringVar(&heightmapFileName, heightmapFilenameArgName, heightmapDefaultFileName, heightmapFileNameUsage)
 	flag.Parse()
 
 	err := godotenv.Load()
@@ -32,21 +32,21 @@ func main() {
 	}
 
 	log.Println("Start downloading...")
-	err = fileSystem.DownloadFile(os.Getenv("HEIGHTMAPS_PATH")+heightmapFileName, heightmapDownloadBaseUrl+heightmapFileName)
+	err = filesystem.DownloadFile(os.Getenv("HEIGHTMAPS_PATH")+heightmapFileName, heightmapDownloadBaseUrl+heightmapFileName)
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Downloading finished")
 
 	log.Println("Start unzipping...")
-	err = fileSystem.Unzip(os.Getenv("HEIGHTMAPS_PATH")+heightmapFileName, os.Getenv("HEIGHTMAPS_PATH"))
+	err = filesystem.Unzip(os.Getenv("HEIGHTMAPS_PATH")+heightmapFileName, os.Getenv("HEIGHTMAPS_PATH"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Done")
 
 	log.Println("Deleting temp files...")
-	err = fileSystem.Copy(os.Getenv("HEIGHTMAPS_PATH")+heightmapFileName[:len(heightmapFileName)-3]+"asc",
+	err = filesystem.Copy(os.Getenv("HEIGHTMAPS_PATH")+heightmapFileName[:len(heightmapFileName)-3]+"asc",
 		os.Getenv("HEIGHTMAPS_PATH")+os.Getenv("LATEST_HEIGHTMAP_NAME"))
 	err = os.Remove(os.Getenv("HEIGHTMAPS_PATH") + heightmapFileName)
 	err = os.Remove(os.Getenv("HEIGHTMAPS_PATH") + heightmapFileName[:len(heightmapFileName)-3] + "prj")
