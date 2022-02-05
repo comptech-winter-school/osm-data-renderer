@@ -10,7 +10,7 @@ import (
 )
 
 func GetFileNameByLatLonRadius(lat, lon, radius float32) string {
-	return os.Getenv("HIGHMAP_PATH") + "srtm_44_01.asc"
+	return os.Getenv("HEIGHTMAPS_PATH") + os.Getenv("LATEST_HEIGHTMAP_NAME")
 }
 
 func GetHeightMapResponse(lat, lon, radius float32) model.HeightMapResponse {
@@ -26,7 +26,7 @@ func GetHeightMapResponse(lat, lon, radius float32) model.HeightMapResponse {
 	if err != nil {
 		log.Println("ERROR: Some error has occurred while encoding file: " + err.Error())
 	}
-	return model.HeightMapResponse{encodedHeightMap, mapSize, border}
+	return model.HeightMapResponse{Heightmap: encodedHeightMap, Size: mapSize, Border: border}
 }
 
 func GetHeightMap(w http.ResponseWriter, r *http.Request) {

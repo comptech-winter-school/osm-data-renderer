@@ -25,7 +25,10 @@ func LineToLineString(line []Point) (string, error) {
 	for _, point := range line {
 		stringCoords += fmt.Sprintf(",%f %f", point.X, point.Y)
 	}
-	return fmt.Sprintf("LINESTRING(%s)", stringCoords[1:]), nil
+	if len(stringCoords) != 0 {
+		stringCoords = stringCoords[1:]
+	}
+	return fmt.Sprintf("LINESTRING(%s)", stringCoords), nil
 }
 
 func StrToFloat(str string) (float32, error) {
@@ -37,16 +40,23 @@ func StrToFloat(str string) (float32, error) {
 }
 
 func LineStringToLine(lineString string) ([]model.Point, error) {
-	lineString = lineString[11 : len(lineString)-1]
-	spoints := strings.Split(lineString, ",")
+	const (
+		lineStringPrefixSize  = 11
+		lineStringPostfixSize = 1
+	)
+	lineString = lineString[lineStringPrefixSize : len(lineString)-lineStringPostfixSize]
+	if len(lineString) == 0 {
+		return []model.Point{}, nil
+	}
+	stringPoints := strings.Split(lineString, ",")
 	var points []model.Point
-	for _, spoint := range spoints {
-		scoord := strings.Split(spoint, " ")
-		x, err := StrToFloat(scoord[0])
+	for _, stringPoint := range stringPoints {
+		stringCoords := strings.Split(stringPoint, " ")
+		x, err := StrToFloat(stringCoords[0])
 		if err != nil {
 			return nil, err
 		}
-		y, err := StrToFloat(scoord[1])
+		y, err := StrToFloat(stringCoords[1])
 		if err != nil {
 			return nil, err
 		}

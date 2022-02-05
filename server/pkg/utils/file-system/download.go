@@ -4,12 +4,14 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
-func DownloadFile(filepath string, url string) (err error) {
+func DownloadFile(path string, url string) (err error) {
+	os.MkdirAll(filepath.Dir(path), os.ModePerm)
 
 	// Create the file
-	out, err := os.Create(filepath)
+	out, err := os.Create(path)
 	if err != nil {
 		return err
 	}

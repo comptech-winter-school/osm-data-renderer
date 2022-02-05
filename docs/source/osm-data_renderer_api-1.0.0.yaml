@@ -2,66 +2,85 @@
 openapi: 3.0.2
 info:
   title: osm-data-renderer-api
-  description: ""
+  description: Данный Продукт [«OpenStreetMap Data Renderer»](https://comptech-winter-school.github.io/osm-data-renderer/#/) помогает в понимании расположения того или иного здания или дороги, а также в представлении разных географических мест, что может положительно подействовать на доходы использующих это решение предприятий. Далее приведено описание методов серверной части приложения.
   version: 1.0.0
 servers:
 - url: /
 paths:
-  /config:
+  /apiv1/config:
     get:
       tags:
       - config
-      summary: Получение конфигурации
+      summary: Получить конфигурацию
+      description: Получение конфигурации параметров рендеринга тех или иных объектов.
       operationId: getConfig
       responses:
         "200":
-          description: successful operation
+          description: Successful operation
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Config'
-  /objects:
+        "500":
+          description: Server not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /apiv1/objects:
     post:
       tags:
       - objects
-      summary: Получение данных о строениях и дорогах
+      summary: Получить данные о строениях и дорогах
+      description: Получение данных (координат и метаинформации) о строениях и дорогах на карте.
       requestBody:
         $ref: '#/components/requestBodies/Objects'
       responses:
         "200":
-          description: successful operation
+          description: Successful operation
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Objects'
-  /tettain:
-    post:
-      tags:
-      - tettain
-      summary: Получение данных о ландшафте
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        "200":
-          description: successful operation
+        "500":
+          description: Server not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tettain'
+                $ref: '#/components/schemas/Error'
+  /apiv1/terrain:
+    post:
+      tags:
+      - terrain
+      summary: Получить данные о ландшафте
+      description: Получение данных о ландшафте на карте.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Terrain'
+        "500":
+          description: Server not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     Config:
       properties:
         nullBuildingHeight:
           type: integer
+          description: Значение высоты здания, если информация о его этажности отсутсвует
           format: int32
-    Tettain:
+          example: 3
+    Terrain:
       properties:
         highmap:
           type: string
+          description: Карта высот в виде бинарных данных
           format: base64
           default: base64
         size:
@@ -72,42 +91,59 @@ components:
       properties:
         height:
           type: integer
+          description: Высота карты высот в пикселях
           format: uint
+          example: 1024
         width:
           type: integer
+          description: Ширина карты высот в пикселях
           format: uint
+          example: 2048
     Border:
       properties:
         x_min:
           type: number
+          description: Координата широты левого нижнего угла карты высот в градусах
           format: float
+          example: 15.33
         y_min:
           type: number
+          description: Координата долготы левого нижнего угла карты высот в градусах
           format: float
+          example: 6.4536
         x_max:
           type: number
+          description: Координата широты правого верхнего угла карты высот в градусах
           format: float
+          example: 87.77
         y_max:
           type: number
+          description: Координата долготы правого верхнего угла карты высот в градусах
           format: float
+          example: 16.35
     Objects:
       properties:
         buildings:
           type: array
+          description: Данные о строениях
           items:
             $ref: '#/components/schemas/Building'
         highways:
           type: array
+          description: Данные о дорогах
           items:
             $ref: '#/components/schemas/Highway'
     Building:
       properties:
         levels:
           type: integer
+          description: Этажность здания
           format: uint
           nullable: true
+          example: 4
         polygon:
           type: array
+          description: Координаты вершин сдания, идущие по часовой стрелке
           items:
             $ref: '#/components/schemas/Position'
     Highway:
@@ -118,10 +154,21 @@ components:
       properties:
         x:
           type: number
+          description: Широта в градусах
           format: float
+          example: 56.44
         y:
           type: number
+          description: Долгота в градусах
           format: float
+          example: 69.68
+      description: Данные о позиции объекта
+    Error:
+      properties:
+        message:
+          type: string
+          description: Сообщение о статусе работы сервера
+          example: Сервер не отвечает
   requestBodies:
     Objects:
       description: ""
@@ -133,5 +180,7 @@ components:
                 $ref: '#/components/schemas/Position'
               radius:
                 type: integer
+                description: Радиус запрашиваемой области в метрах
                 format: uint
+                example: 5
       required: true

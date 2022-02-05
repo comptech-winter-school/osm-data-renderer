@@ -119,7 +119,7 @@ Unity с [https://unity3d.com/get-unity/download](https://unity3d.com/ru/get-uni
 
 2. Запустите проект, нажав кнопку **Play** в верней центральной части среды.
 
-    ![Запуск](../pictures/step1.png)
+    ![Запуск](../pictures/step2.png)
 
 ### Управление
 
