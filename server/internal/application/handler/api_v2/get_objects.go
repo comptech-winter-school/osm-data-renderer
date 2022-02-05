@@ -106,7 +106,7 @@ func (h *Handler) GetObjects(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}
@@ -126,7 +126,7 @@ func (h *Handler) GetObjects(w http.ResponseWriter, r *http.Request) {
 
 	chunks, err := GetObjectData(h, t.Position, int(t.ChunkLoadingDistance), t.ChunkCache)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}

@@ -71,7 +71,7 @@ func (h *Handler) GetObjects(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}
@@ -91,7 +91,7 @@ func (h *Handler) GetObjects(w http.ResponseWriter, r *http.Request) {
 
 	buildings, highways, err := GetObjectData(h, t.Position.X, t.Position.Y, t.Radius)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}
