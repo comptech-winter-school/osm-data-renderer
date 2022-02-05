@@ -4,7 +4,7 @@ using UnityEngine;
 
 // Здесь пилится здание по прямым линиям
 
-namespace BuildingClass
+namespace ObjectsDefinition
 {
     // Класс здания
 

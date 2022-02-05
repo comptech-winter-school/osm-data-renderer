@@ -2,7 +2,8 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
-using Utilities;
+using DataManagement;
+using ChunkSystem;
 
 // Здесь лежит код для подключения к серверу
 
@@ -10,16 +11,8 @@ namespace HTTPClient
 {
     public class HTTPClient : MonoBehaviour
     {
-        // Start is called before the first frame update
-        void Start()
-        {
-            /** 
-             * Если не знаешь про StartCoroutine(), советую почитать, становится более ясно почему функции
-             * общения с сервером должны быть устроены именно так как они устроены
-             */
-            StartCoroutine(GetText());
-            StartCoroutine(GetFile());
-        }
+        public static bool isRequestSent = false;
+        const string serverURL = "http://159.223.28.18:8090/apiv1/objects";
 
         IEnumerator GetText()
         {
@@ -42,12 +35,13 @@ namespace HTTPClient
             }
         }
 
-        IEnumerator GetFile()
-        {
-            // То же самое, что и с GetText()
-            UnityWebRequest request = new UnityWebRequest("http://localhost:5000/test.json", UnityWebRequest.kHttpVerbGET);
-            string path = Path.Combine(Application.dataPath, "Resources/test.json");
-            request.downloadHandler = new DownloadHandlerFile(path);
+            var uwr = new UnityWebRequest(serverURL, "POST");
+            //string test = request.encode();
+            //File.WriteAllText(Path.Combine(Application.dataPath, "Resources/requestOutput"), test);
+            byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(request.encode());
+            uwr.uploadHandler = new UploadHandlerRaw(jsonToSend);
+            uwr.downloadHandler = new DownloadHandlerBuffer();
+            uwr.SetRequestHeader("Content-Type", "application/json");
 
             yield return request.SendWebRequest();
 

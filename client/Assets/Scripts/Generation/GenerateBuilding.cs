@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ProceduralToolkit;
-using BuildingClass;
+using ObjectsDefinition;
 using TerrainGeneration;
 
 // Этот скрипт создаёт одно здание и рисует его
