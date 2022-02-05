@@ -15,6 +15,11 @@ func NewStorage(db *sqlx.DB) *Storage {
 	return &Storage{db: db}
 }
 
+const (
+	metersPerLatDegree = 111319.0
+	metersPerLonDegree = 111134.0
+)
+
 func (s *Storage) GetOsmDataByRadius(ctx context.Context, Lat, Lon, RadiusMeters float64) (*[]OSM, error) {
 	var osmData []OSM
 
@@ -22,7 +27,7 @@ func (s *Storage) GetOsmDataByRadius(ctx context.Context, Lat, Lon, RadiusMeters
 		Select("way_id, name, ST_AsText(polygon) AS polygon, lat, lon, tags, type").
 		From("osm_data")
 
-	latR, lonR := RadiusMeters/111319.0, RadiusMeters/111134.0
+	latR, lonR := RadiusMeters/metersPerLatDegree, RadiusMeters/metersPerLonDegree
 
 	q = q.Where(sq.And{sq.GtOrEq{"lat": Lat - latR}, sq.LtOrEq{"lat": Lat + latR}})
 	q = q.Where(sq.And{sq.GtOrEq{"lon": Lon - lonR}, sq.LtOrEq{"lon": Lon + lonR}})
