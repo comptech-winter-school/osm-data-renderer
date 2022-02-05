@@ -1,35 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using BuildingClass;
 using ProceduralToolkit;
+using ObjectsDefinition;
 
-public class GenerateHighway : MonoBehaviour
+namespace Generation
 {
-    public static GameObject createHighway(Highway highway)
+    public class GenerateHighway : MonoBehaviour
     {
-        GameObject highwayGo = Instantiate(new GameObject());
-        highwayGo.name = "highway" + highway.getCount();
-        highway.incrementCount();
+        public static GameObject createHighway(Highway highway)
+        {
+            GameObject highwayGo = Instantiate(new GameObject());
+            highwayGo.name = "highway" + highway.getCount();
+            highway.incrementCount();
 
-        var highwayRenderer = highwayGo.AddComponent<MeshRenderer>();
-        var highwayFilter = highwayGo.AddComponent<MeshFilter>();
+            var highwayRenderer = highwayGo.AddComponent<MeshRenderer>();
+            var highwayFilter = highwayGo.AddComponent<MeshFilter>();
 
-        highwayRenderer.material = Resources.Load("BuildingMaterial", typeof(Material)) as Material;
+            highwayRenderer.material = Resources.Load("BuildingMaterial", typeof(Material)) as Material;
 
-        Mesh highwayMesh = new Mesh();
+            Mesh highwayMesh = new Mesh();
 
-        // Здесь создаётся полигон из N точек с помощью ProceduralToolkit
-        Tessellator tessellator = new Tessellator();
-        tessellator.AddContour(highway.getVertices());
-        tessellator.Tessellate();
-        highwayMesh = tessellator.ToMesh();
-        highwayMesh.RecalculateNormals();
-        highwayMesh.RecalculateUVDistributionMetrics();
+            // Здесь создаётся полигон из N точек с помощью ProceduralToolkit
+            Tessellator tessellator = new Tessellator();
+            tessellator.AddContour(highway.getVertices());
+            tessellator.Tessellate();
+            highwayMesh = tessellator.ToMesh();
+            highwayMesh.RecalculateNormals();
+            highwayMesh.RecalculateUVDistributionMetrics();
 
-        highwayFilter.mesh = highwayMesh;
-        highwayGo.transform.Translate(new Vector3(0.0f, 0.01f, 0.0f));
+            highwayFilter.mesh = highwayMesh;
+            highwayGo.transform.Translate(new Vector3(0.0f, 0.01f, 0.0f));
 
-        return highwayGo;
+            return highwayGo;
+        }
     }
 }

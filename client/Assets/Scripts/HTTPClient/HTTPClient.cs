@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
-using Utilities;
+using DataManagement;
+using ChunkSystem;
 
 // Здесь лежит код для подключения к серверу
 
@@ -12,14 +13,7 @@ namespace HTTPClientNamespace
     public class HTTPClient : MonoBehaviour
     {
         public static bool isRequestSent = false;
-        const string serverURL = "http://localhost:5000";
-
-        // Start is called before the first frame update
-        void Start()
-        {
-            //StartCoroutine(GetText());
-            //StartCoroutine(GetFile());
-        }
+        const string serverURL = "http://159.223.28.18:8090/apiv1/objects";
 
         public static IEnumerator SendRequest(Request request)
         {
@@ -31,6 +25,8 @@ namespace HTTPClientNamespace
             isRequestSent = true;
 
             var uwr = new UnityWebRequest(serverURL, "POST");
+            //string test = request.encode();
+            //File.WriteAllText(Path.Combine(Application.dataPath, "Resources/requestOutput"), test);
             byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(request.encode());
             uwr.uploadHandler = new UploadHandlerRaw(jsonToSend);
             uwr.downloadHandler = new DownloadHandlerBuffer();
