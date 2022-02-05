@@ -15,7 +15,6 @@ namespace DataManagement
     {
         public static int tileSize = TerrainGenerator.chunkSize;
         public static float originShift = 6378137 * (float)Math.PI;
-        public static float initialResolution = 2.0f * (float)Math.PI * 6378137.0f / (float)tileSize;
         const float xoffset = -2283256.0f;
         const float yoffset = -7305116.0f;
 
@@ -45,14 +44,6 @@ namespace DataManagement
                 //Array.Reverse(buildings[i].polygon, 0, buildings[i].polygon.Length);
                 for (int j = 0; j < buildings[i].polygon.Length; j++)
                 {
-                    //float x = buildings[i].polygon[j].x;
-                    //float y = buildings[i].polygon[j].y;
-                    //x = 6371.0f * Mathf.Cos(buildings[i].polygon[j].x) * Mathf.Cos(buildings[i].polygon[j].y);
-                    //y = 6371.0f * Mathf.Cos(buildings[i].polygon[j].x) * Mathf.Sin(buildings[i].polygon[j].y);
-                    //Debug.Log("New coords: " + x + " " + y);
-                    //buildings[i].polygon[j].x = x;
-                    //buildings[i].polygon[j].y = y;
-
                     buildings[i].polygon[j] = convertToMercator(buildings[i].polygon[j]);
                     Debug.Log("new coords: " + buildings[i].polygon[j].x + " " + buildings[i].polygon[j].y);
                 }
@@ -61,30 +52,22 @@ namespace DataManagement
 
                 Chunks.objectsBuilt = true;
             }
-            for (int i = 0; i < highways.Length; i++)
-            {
-                for (int j = 0; j < highways[i].polygon.Length; j++)
-                {
-                    highways[i].polygon[j] = convertToMercator(highways[i].polygon[j]);
-                }
-                highways[i] = new Highway(highways[i].polygon);
-                GenerateHighway.createHighway(highways[i]);
-                Chunks.objectsBuilt = true;
-            }
+            //for (int i = 0; i < highways.Length; i++)
+            //{
+            //    for (int j = 0; j < highways[i].polygon.Length; j++)
+            //    {
+            //        highways[i].polygon[j] = convertToMercator(highways[i].polygon[j]);
+            //    }
+            //    highways[i] = new Highway(highways[i].polygon);
+            //    GenerateHighway.createHighway(highways[i]);
+            //    Chunks.objectsBuilt = true;
+            //}
         }
 
         public static Point convertToMercator(Point point)
         {
             float x = point.x;
             float y = point.y;
-            //x = 6367.0f * Mathf.Cos(point.x) * Mathf.Cos(point.y);
-            //y = 6367.0f * Mathf.Cos(point.x) * Mathf.Sin(point.y);
-            //x = 111.32f * point.x;
-            //y = 40075.0f * (float)Math.Cos(point.x) / 360.0f * point.y;
-            //Debug.Log("New coords: " + x + " " + y);
-            //point.x = x;
-            //point.y = y;
-            //return point;
 
             float meterx, meterz;
             meterx = point.y * originShift / 180.0f;
@@ -92,8 +75,6 @@ namespace DataManagement
             meterz = meterz * originShift / 180.0f;
             point.x = meterx + xoffset;
             point.y = meterz + yoffset;
-
-            //point = metertoPixel(meterx, meterz, 1);
 
             return point;
         }
@@ -111,37 +92,6 @@ namespace DataManagement
             point.y = lon;
 
             return point;
-        }
-
-        public static float Resolution(int zoom)
-        {
-            return initialResolution / (float)Math.Pow(2, zoom);
-        }
-
-        public static Point metertoPixel(float meterx, float meterz, int zoom)
-        {
-            float res = Resolution(zoom);
-            float pixelX, pixelY;
-
-            pixelY = (-meterx + originShift) / res;
-            pixelX = (meterz + originShift) / res;
-
-            return new Point(pixelX, pixelY);
-
-        }
-
-        public static Point pixeltoTile(float pixelX, float pixelY)
-        {
-            int Tilex = (int)(Math.Ceiling(pixelX / (double)tileSize)) - 1;
-            int Tiley = (int)(Math.Ceiling(pixelY / (double)tileSize)) - 1;
-
-            return new Point(Tilex, Tiley);
-        }
-
-        public static Point MetersToTile(float meterx, float meterz, int zoom)
-        {
-            Point tempResult = metertoPixel(meterx, meterz, zoom);
-            return pixeltoTile(tempResult.x, tempResult.y);
         }
     }
 }

@@ -50,6 +50,10 @@ namespace ObjectsDefinition
 
         public void setup()
         {
+            if (levels == 0)
+            {
+                levels++;
+            }
             //this = new Building(polygon, levels);
             levels++;
             for (int i = 0; i < polygon.Length; i++)
