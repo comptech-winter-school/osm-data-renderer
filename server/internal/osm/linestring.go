@@ -42,6 +42,9 @@ func LineStringToLine(lineString string) ([]model.Point, error) {
 		lineStringPostfixSize = 1
 	)
 	lineString = lineString[lineStringPrefixSize : len(lineString)-lineStringPostfixSize]
+	if len(lineString) == 0 {
+		return []model.Point{}, nil
+	}
 	stringPoints := strings.Split(lineString, ",")
 	var points []model.Point
 	for _, stringPoint := range stringPoints {
