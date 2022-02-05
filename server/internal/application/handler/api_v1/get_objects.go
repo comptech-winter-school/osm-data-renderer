@@ -13,7 +13,7 @@ import (
 )
 
 type storage interface {
-	GetOsmData(ctx context.Context, Lat, Lng, RadiusMeters float64) (*[]osm.OSM, error)
+	GetOsmDataByRadius(ctx context.Context, Lat, Lng, RadiusMeters float64) (*[]osm.OSM, error)
 }
 
 type Handler struct {
@@ -25,7 +25,7 @@ func NewHandler(storage storage) *Handler {
 }
 
 func GetObjectData(h *Handler, lat, lon, radius float32) ([]model.Building, []model.Highways, error) {
-	osmData, err := h.storage.GetOsmData(context.Background(), float64(lat), float64(lon), float64(radius))
+	osmData, err := h.storage.GetOsmDataByRadius(context.Background(), float64(lat), float64(lon), float64(radius))
 	if err != nil {
 		return nil, nil, err
 	}

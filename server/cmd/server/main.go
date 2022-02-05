@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/api_v1"
+	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/api_v2"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/general"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/osm"
 	"log"
@@ -27,11 +28,16 @@ func main() {
 
 	osmStorage := osm.NewStorage(conn)
 	api_v1_handler := api_v1.NewHandler(osmStorage)
+	api_v2_handler := api_v2.NewHandler(osmStorage)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/ping", general.Ping).Methods("GET")
 	r.HandleFunc("/apiv1/config", api_v1.GetConfig).Methods("GET")
 	r.HandleFunc("/apiv1/objects", api_v1_handler.GetObjects).Methods("POST")
 	r.HandleFunc("/apiv1/heightmap", api_v1.GetHeightMap).Methods("POST")
+
+	r.HandleFunc("/apiv2/config", api_v2.GetConfig).Methods("GET")
+	r.HandleFunc("/apiv2/objects", api_v2_handler.GetObjects).Methods("POST")
+	r.HandleFunc("/apiv2/heightmap", api_v2.GetHeightMap).Methods("POST")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", applicationPort), r))
 }
