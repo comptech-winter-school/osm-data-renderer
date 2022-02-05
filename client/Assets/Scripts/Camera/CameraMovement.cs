@@ -9,12 +9,13 @@ namespace Camera
     public class CameraMovement : MonoBehaviour
     {
 
-        public float cameraSpeed = 0.25f * 1.4f;
+        public float cameraSpeed = 10.0f * 1.0f;
         private float cameraSensitivity = 4.0f;
         private float xInput;
         private float zInput;
         private bool isSpacePressed = false;
         private bool isShiftPressed = false;
+        private bool isCtrlPressed = false;
         Vector2 rotation = new Vector2();
 
         // Start is called before the first frame update
@@ -40,6 +41,10 @@ namespace Camera
                 isShiftPressed = true;
             if (Input.GetKeyUp(KeyCode.LeftShift))
                 isShiftPressed = false;
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+                isCtrlPressed = true;
+            if (Input.GetKeyUp(KeyCode.LeftControl))
+                isCtrlPressed = false;
         }
 
         private void FixedUpdate()
@@ -50,6 +55,10 @@ namespace Camera
                 transform.Translate(new Vector3(0.0f, cameraSpeed, 0.0f));
             if (isShiftPressed)
                 transform.Translate(new Vector3(0.0f, -cameraSpeed, 0.0f));
+            if (isCtrlPressed)
+                cameraSpeed = 100.0f * 1.4f;
+            else
+                cameraSpeed = 10.0f * 1.4f;
         }
     }
 }
