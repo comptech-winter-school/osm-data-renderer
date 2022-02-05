@@ -22,11 +22,30 @@ public class TreePlacement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        LoadTerrain();
+        //FreeBuildingSites();
+        SetTreeMap();
+        SetTrees();
+    }
+
+    void LoadTerrain()
+    {
         HeightMap = (Texture2D)AssetDatabase.LoadAssetAtPath(HeightMapPath, typeof(Texture2D));
         ChunkSizeX = HeightMap.width;
         ChunkSizeZ = HeightMap.height;
-        SetTreeMap();
-        SetTrees();
+    }
+
+    void FreeBuildingSites(Response r)
+    {
+        for (int i = 0; i < r.GetNumOfBuildings(); i++)
+        {
+            for (int j = 0; j < r.GetBuildingAt(i).GetNumOfPoints(); j++)
+            {
+                float x, y;
+                (x, y) = r.GetBuildingAt(i).GetPointAt(j);
+                HeightMap.SetPixel((int) x, (int) y, Color.black);
+            }
+        }
     }
 
     void SetTreeMap()
