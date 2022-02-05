@@ -13,4 +13,14 @@ public class Response
     {
         return JsonUtility.FromJson<Response>(path);
     }
+
+    public int GetNumOfBuildings()
+    {
+        return buildings.Length;
+    }
+
+    public BuildingOther GetBuildingAt(int i)
+    {
+        return buildings[i];
+    }
 }
