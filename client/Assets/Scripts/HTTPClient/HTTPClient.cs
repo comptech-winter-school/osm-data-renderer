@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -7,33 +8,23 @@ using ChunkSystem;
 
 // «десь лежит код дл€ подключени€ к серверу
 
-namespace HTTPClient
+namespace HTTPClientNamespace
 {
     public class HTTPClient : MonoBehaviour
     {
         public static bool isRequestSent = false;
         const string serverURL = "http://159.223.28.18:8090/apiv1/objects";
 
-        IEnumerator GetText()
+        public static IEnumerator SendRequest(Request request)
         {
-            /**
-             * «десь ничего сложного с точки зрени€ кода не происходит, достаточно
-             * узнать что такое UnityWebRequest чтобы пон€ть что тут творитс€ 
-             */
-            UnityWebRequest request = UnityWebRequest.Get("http://localhost:5000/test.txt");
-            yield return request.SendWebRequest();
-
-            if (request.result != UnityWebRequest.Result.Success)
+            if (isRequestSent)
             {
-                Debug.Log(request.error);
+                yield return null;
             }
-            else
-            {
-                TestingHTTPdata.setData(request.downloadHandler.text);
 
-                Debug.Log("Finished getting data");
-            }
-        }
+            isRequestSent = true;
+
+            Debug.Log("camera pos (Converted): " + request.position.x + " " + request.position.y);
 
             var uwr = new UnityWebRequest(serverURL, "POST");
             //string test = request.encode();
@@ -43,15 +34,20 @@ namespace HTTPClient
             uwr.downloadHandler = new DownloadHandlerBuffer();
             uwr.SetRequestHeader("Content-Type", "application/json");
 
-            yield return request.SendWebRequest();
+            //Send the request then wait here until it returns
+            yield return uwr.SendWebRequest();
 
-            if (request.result != UnityWebRequest.Result.Success)
+            if (uwr.result != UnityWebRequest.Result.Success)
             {
-                Debug.Log(request.error);
+                Debug.Log("Error While Sending: " + uwr.error);
+                isRequestSent = false;
             }
             else
             {
-                Debug.Log("Successfully downloaded and saved to " + path);
+                Debug.Log("Sent: " + request.encode());
+                Debug.Log("Received: " + uwr.downloadHandler.text);
+                Chunks.response = Response.fromJson(uwr.downloadHandler.text);
+                isRequestSent = false;
             }
         }
     }
