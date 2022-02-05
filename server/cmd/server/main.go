@@ -27,17 +27,17 @@ func main() {
 	defer conn.Close()
 
 	osmStorage := osm.NewStorage(conn)
-	api_v1_handler := api_v1.NewHandler(osmStorage)
-	api_v2_handler := api_v2.NewHandler(osmStorage)
+	apiv1Handler := api_v1.NewHandler(osmStorage)
+	apiv2Handler := api_v2.NewHandler(osmStorage)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/ping", general.Ping).Methods("GET")
 	r.HandleFunc("/apiv1/config", api_v1.GetConfig).Methods("GET")
-	r.HandleFunc("/apiv1/objects", api_v1_handler.GetObjects).Methods("POST")
+	r.HandleFunc("/apiv1/objects", apiv1Handler.GetObjects).Methods("POST")
 	r.HandleFunc("/apiv1/heightmap", api_v1.GetHeightMap).Methods("POST")
 
 	r.HandleFunc("/apiv2/config", api_v2.GetConfig).Methods("GET")
-	r.HandleFunc("/apiv2/objects", api_v2_handler.GetObjects).Methods("POST")
+	r.HandleFunc("/apiv2/objects", apiv2Handler.GetObjects).Methods("POST")
 	r.HandleFunc("/apiv2/heightmap", api_v2.GetHeightMap).Methods("POST")
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", applicationPort), r))
 }
