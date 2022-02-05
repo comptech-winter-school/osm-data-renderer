@@ -10,7 +10,7 @@ import (
 )
 
 type storage interface {
-	GetOsmData(ctx context.Context, Lat, Lng, RadiusMeters float64) (*[]osm.OSM, error)
+	GetOsmDataByRadius(ctx context.Context, Lat, Lng, RadiusMeters float64) (*[]osm.OSM, error)
 }
 
 type Handler struct {
@@ -23,7 +23,7 @@ func NewHandler(storage storage) *Handler {
 
 func (h *Handler) Handle(w http.ResponseWriter, req *http.Request) {
 	id, _ := uuid.NewGen().NewV4()
-	data, err := h.storage.GetOsmData(req.Context(), 232.3, 2323.34, 34)
+	data, err := h.storage.GetOsmDataByRadius(req.Context(), 232.3, 2323.34, 34)
 	if err != nil {
 		//в жизни так делать нельзя(отдавать пользователю системные ошибки)
 		fmt.Fprintf(w, fmt.Sprintf("error load data %w", err))

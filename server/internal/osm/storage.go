@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	sq "github.com/Masterminds/squirrel"
-
 	"github.com/jmoiron/sqlx"
 )
 
@@ -16,7 +15,7 @@ func NewStorage(db *sqlx.DB) *Storage {
 	return &Storage{db: db}
 }
 
-func (s *Storage) GetOsmData(ctx context.Context, Lat, Lon, RadiusMeters float64) (*[]OSM, error) {
+func (s *Storage) GetOsmDataByRadius(ctx context.Context, Lat, Lon, RadiusMeters float64) (*[]OSM, error) {
 	var osmData []OSM
 
 	q := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).
@@ -27,6 +26,28 @@ func (s *Storage) GetOsmData(ctx context.Context, Lat, Lon, RadiusMeters float64
 
 	q = q.Where(sq.And{sq.GtOrEq{"lat": Lat - latR}, sq.LtOrEq{"lat": Lat + latR}})
 	q = q.Where(sq.And{sq.GtOrEq{"lon": Lon - lonR}, sq.LtOrEq{"lon": Lon + lonR}})
+
+	query, args, err := q.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.db.SelectContext(ctx, &osmData, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	return &osmData, nil
+}
+
+func (s *Storage) GetOsmDataByBox(ctx context.Context, latMin, lonMin, latMax, lonMax float32) (*[]OSM, error) {
+	var osmData []OSM
+
+	q := sq.StatementBuilder.PlaceholderFormat(sq.Dollar).
+		Select("way_id, name, ST_AsText(polygon) AS polygon, lat, lon, tags, type").
+		From("osm_data")
+
+	q = q.Where(sq.And{sq.GtOrEq{"lat": latMin}, sq.LtOrEq{"lat": latMax}})
+	q = q.Where(sq.And{sq.GtOrEq{"lon": lonMin}, sq.LtOrEq{"lon": lonMax}})
 
 	query, args, err := q.ToSql()
 	if err != nil {
