@@ -38,15 +38,15 @@ func StrToFloat(str string) (float32, error) {
 
 func LineStringToLine(lineString string) ([]model.Point, error) {
 	lineString = lineString[11 : len(lineString)-1]
-	spoints := strings.Split(lineString, ",")
+	stringPoints := strings.Split(lineString, ",")
 	var points []model.Point
-	for _, spoint := range spoints {
-		scoord := strings.Split(spoint, " ")
-		x, err := StrToFloat(scoord[0])
+	for _, stringPoint := range stringPoints {
+		stringCoords := strings.Split(stringPoint, " ")
+		x, err := StrToFloat(stringCoords[0])
 		if err != nil {
 			return nil, err
 		}
-		y, err := StrToFloat(scoord[1])
+		y, err := StrToFloat(stringCoords[1])
 		if err != nil {
 			return nil, err
 		}
