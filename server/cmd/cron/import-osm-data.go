@@ -60,14 +60,6 @@ func main() {
 	log.Println("Temp files deleted")
 }
 
-func InversePolygon(poly []osm.Point) []osm.Point {
-	var invPoly []osm.Point
-	for i := len(poly); i >= 0; i-- {
-		invPoly = append(invPoly, poly[i])
-	}
-	return invPoly
-}
-
 func ImportOsmData(store *osm.Storage, pbfFileName string) error {
 
 	f, err := os.Open(os.Getenv("PROTOBUF_PATH") + pbfFileName)
@@ -117,9 +109,6 @@ func ImportOsmData(store *osm.Storage, pbfFileName string) error {
 						var line []osm.Point
 						for _, element := range v.NodeIDs {
 							line = append(line, nodes[element])
-						}
-						if wayType == "building" {
-							line = InversePolygon(line)
 						}
 						lineString, err := osm.LineToLineString(line)
 						if err != nil {
