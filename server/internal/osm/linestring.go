@@ -25,7 +25,10 @@ func LineToLineString(line []Point) (string, error) {
 	for _, point := range line {
 		stringCoords += fmt.Sprintf(",%f %f", point.X, point.Y)
 	}
-	return fmt.Sprintf("LINESTRING(%s)", stringCoords[1:]), nil
+	if len(stringCoords) != 0 {
+		stringCoords = stringCoords[1:]
+	}
+	return fmt.Sprintf("LINESTRING(%s)", stringCoords), nil
 }
 
 func StrToFloat(str string) (float32, error) {

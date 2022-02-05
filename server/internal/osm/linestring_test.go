@@ -6,38 +6,55 @@ import (
 )
 
 func TestLineStringToLine(t *testing.T) {
-
-	got, gotErr := LineStringToLine("LINESTRING(1 2,3 4)")
-	want, wantErr := []model.Point{{1, 2}, {3, 4}}, error(nil)
-
-	if gotErr != wantErr {
-		t.Error()
+	type FuncTest struct {
+		Arg         string
+		Expected    []model.Point
+		ExpectedErr error
 	}
-	for i, point := range want {
-		if (point.X != got[i].X) || (point.Y != got[i].Y) {
+
+	funcTest := []FuncTest{
+		{"LINESTRING(1 2,3 4)", []model.Point{{1, 2}, {3, 4}}, nil},
+		{"LINESTRING(1.312 2.2342342234)", []model.Point{{1.312, 2.2342342234}}, nil},
+		{"LINESTRING()", []model.Point{}, nil},
+	}
+
+	for _, test := range funcTest {
+		got, gotErr := LineStringToLine(test.Arg)
+		if gotErr != test.ExpectedErr {
 			t.Error()
 		}
-	}
 
-	got, gotErr = LineStringToLine("LINESTRING(1.312 2.2342342234)")
-	want, wantErr = []model.Point{{1.312, 2.2342342234}}, error(nil)
-
-	if gotErr != wantErr {
-		t.Error()
-	}
-	for i, point := range want {
-		if (point.X != got[i].X) || (point.Y != got[i].Y) {
+		if gotErr != test.ExpectedErr {
 			t.Error()
 		}
+		for i, point := range test.Expected {
+			if (point.X != got[i].X) || (point.Y != got[i].Y) {
+				t.Error()
+			}
+		}
+	}
+}
+
+func TestLineToLineString(t *testing.T) {
+	type FuncTest struct {
+		Arg         []Point
+		Expected    string
+		ExpectedErr error
 	}
 
-	got, gotErr = LineStringToLine("LINESTRING()")
-	want, wantErr = []model.Point{}, error(nil)
-	if gotErr != wantErr {
-		t.Error()
+	funcTest := []FuncTest{
+		{[]Point{{1, 2}, {3, 4}}, "LINESTRING(1.000000 2.000000,3.000000 4.000000)", nil},
+		{[]Point{{1.312, 2.2342342234}}, "LINESTRING(1.312000 2.234234)", nil},
+		{[]Point{}, "LINESTRING()", nil},
 	}
-	for i, point := range want {
-		if (point.X != got[i].X) || (point.Y != got[i].Y) {
+
+	for _, test := range funcTest {
+		got, gotErr := LineToLineString(test.Arg)
+		if gotErr != test.ExpectedErr {
+			t.Error()
+		}
+
+		if got != test.Expected {
 			t.Error()
 		}
 	}
