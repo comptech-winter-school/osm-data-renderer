@@ -14,7 +14,8 @@ namespace ChunkSystem
         Transform camera;
         public static Response response = new Response();
         public static Request request = new Request();
-        const uint radius = 200;
+        const uint radius = 500;
+        public static bool objectsBuilt = false;
 
         // Start is called before the first frame update
         void Start()
@@ -23,40 +24,49 @@ namespace ChunkSystem
             Vector3 chunksOrigin = findClosestPoint(camera.transform.position);
 
             chunks = TerrainGenerator.generateChunks(chunksOrigin);
-            request.position = new Point(camera.position.x, camera.position.z);
+            //request.position = new Point(camera.position.x, camera.position.z);
+            request.position = Response.convertToWGS84(new Point(camera.position.x, camera.position.z));
             request.radius = radius;
             StartCoroutine(HTTPClient.SendRequest(request));
-            response.generateObjects();
         }
 
         // Update is called once per frame
         void Update()
         {
+            if (!objectsBuilt)
+            {
+                response.generateObjects();
+            }
+
             if (camera.position.x < chunks[4].transform.position.x)
             {
                 chunks = TerrainGenerator.chunkChange(chunks, Direction.LEFT);
-                request.position = new Point(camera.position.x, camera.position.z);
+                //request.position = new Point(camera.position.x, camera.position.z);
+                request.position = Response.convertToWGS84(new Point(camera.position.x, camera.position.z));
                 StartCoroutine(HTTPClient.SendRequest(request));
                 response.generateObjects();
             }
-            if (camera.position.z > (chunks[4].transform.position.z + TerrainGenerator.chunkSize))
+            if (camera.position.z > (chunks[4].transform.position.z + TerrainGenerator.chunkSize * 10.0f))
             {
                 chunks = TerrainGenerator.chunkChange(chunks, Direction.FORWARD);
-                request.position = new Point(camera.position.x, camera.position.z);
+                //request.position = new Point(camera.position.x, camera.position.z);
+                request.position = Response.convertToWGS84(new Point(camera.position.x, camera.position.z));
                 StartCoroutine(HTTPClient.SendRequest(request));
                 response.generateObjects();
             }
-            if (camera.position.x > (chunks[4].transform.position.x + TerrainGenerator.chunkSize))
+            if (camera.position.x > (chunks[4].transform.position.x + TerrainGenerator.chunkSize * 10.0f))
             {
                 chunks = TerrainGenerator.chunkChange(chunks, Direction.RIGHT);
-                request.position = new Point(camera.position.x, camera.position.z);
+                //request.position = new Point(camera.position.x, camera.position.z);
+                request.position = Response.convertToWGS84(new Point(camera.position.x, camera.position.z));
                 StartCoroutine(HTTPClient.SendRequest(request));
                 response.generateObjects();
             }
             if (camera.position.z < (chunks[4].transform.position.z))
             {
                 chunks = TerrainGenerator.chunkChange(chunks, Direction.BACKWARD);
-                request.position = new Point(camera.position.x, camera.position.z);
+                //request.position = new Point(camera.position.x, camera.position.z);
+                request.position = Response.convertToWGS84(new Point(camera.position.x, camera.position.z));
                 StartCoroutine(HTTPClient.SendRequest(request));
                 response.generateObjects();
             }
