@@ -36,37 +36,37 @@ Unity —  межплатформенная среда разработки ко
 Unity с [https://unity3d.com/get-unity/download](https://unity3d.com/ru/get-unity/download):
 
 1. Нажмите **Загрузить Unity Hub**.
-    <img src="../pictures/download-unityhub-1.png" alt="Сайт с загрузочным файлом Unity Hub" title="Сайт с загрузочным файлом Unity Hub">
+    ![Сайт с загрузочным файлом Unity Hub](../pictures/download-unityhub-1.png)
 
 2. Выберите .exe файл, который был загружен в вашем браузере.
-    <img src="../pictures/download-unityhub-2.png" alt=".exe файл в Загрузках браузера" title=".exe файл в Загрузках браузера">
+    ![.exe файл в Загрузках браузера](../pictures/download-unityhub-2.png)
 
 3. Прочтите лицензионное соглашение и нажмите **I Agree**, чтобы продолжить.
-    <img src="../pictures/download-unityhub-3.png" alt="Лицензионное соглашение" title="Лицензионное соглашение">
+    ![Лицензионное соглашение](../pictures/download-unityhub-3.png)
 
 4. Выберите путь, по которому вы хотите установить программное обеспечение, и нажмите **Install**.
     > **Важно:** вы должны установить Hub на диск по умолчанию (где установлена ваша ОС).
 
-    <img src="../pictures/download-unityhub-4.png" alt="Выбор пути установки" title="Выбор пути установки">
+    ![Выбор пути установки](../pictures/download-unityhub-4.png)
 
 Теперь Unity Hub установлен.
 
 ### Установка редактора Unity
 
 1. Запустите Unity Hub > нажмите кнопку учетных записей > нажмите **Sign in**.
-    <img src="../pictures/download-unity-1.png" alt="Вход в Unity Hub" title="Вход в Unity Hub">
+    ![Вход в Unity Hub](../pictures/download-unity-1.png)
 
 2. Нажмите **Installs** в левой части экрана.
-    <img src="../pictures/download-unity-2.png" alt="Выбор меню установки редактора" title="Выбор меню установки редактора">
+    ![Выбор меню установки редактора](../pictures/download-unity-2.png)
 
 3. Нажмите синюю кнопку **Install Editor**.
-    <img src="../pictures/download-unity-3.png" alt="">
+    ![download-unity-3](../pictures/download-unity-3.png)
 
 4. Нажмите синюю кнопку **Install** справа от версии редактора, которую вы хотите использовать.
-    <img src="../pictures/download-unity-4.png" alt="Выбор версии редактора" title="Выбор версии редактора">
+    ![Выбор версии редактора](../pictures/download-unity-4.png)
 
 5. Выберите модули, которые вы хотите использовать > нажмите **Install**, чтобы начать процесс установки.
-    <img src="../pictures/download-unity-5.png" alt="Выбор модулей редактора" title="Выбор модулей редактора">
+    ![Выбор модулей редактора](../pictures/download-unity-5.png)
 
 Вы можете загрузить версии редактора, недоступные в Unity Hub из [Unity Download Archive](https://unity3d.com/get-unity/download/archive?_ga=2.249453703.1816142533.1643890314-1599678641.1643118016).
 
@@ -75,35 +75,35 @@ Unity с [https://unity3d.com/get-unity/download](https://unity3d.com/ru/get-uni
 Чтобы скачать клиент, перейдите в [репрезиторий Продукта](https://github.com/comptech-winter-school/osm-data-renderer).
 
 1. Нажмите зеленую кнопку **Code**, а затем **Download ZIP**.
-    <img src="../pictures/download-project-1.png" alt="Скачивание проекта с GitHub" title="Скачивание проекта с GitHub">
+    ![Скачивание проекта с GitHub](../pictures/download-project-1.png)<
 
 2. Распакуйте архив. Вам понадобится только содержимое директории **client**.
 
 3. Откройте Unity Hub > нажмите кнопку **Open**.
-    <img src="../pictures/download-project-2.png" alt="">
+    ![download-project-2](../pictures/download-project-2.png)
 
 4. Укажите путь до директории **client** распакованного проекта.
-    <img src="../pictures/download-project-3.png" alt="Путь до директории client" title="Путь до директории client">
+    ![Путь до директории client](../pictures/download-project-3.png)
 
 5. В открывшемся проекте нажмите **File -> Build Settings...**.
     > **Важно:** во время написания этого руководства Продукт ещё находился в стадии разработки. Во время компиляции
     > проекта могут возникать ошибки или она может вообще не произойти, поэтому этот и последующие шаги необязательны.
     > Вы можете продолжить работу прямо в среде Unity.
 
-    <img src="../pictures/download-project-4.png" alt="Верхнее меню открывшегося проекта" title="Верхнее меню открывшегося проекта">
+    ![Верхнее меню открывшегося проекта](../pictures/download-project-4.png)
 
 6. Выберете целевую платформу > нажмите **Build**.
-    <img src="../pictures/download-project-5.png" alt="Окно компиляции проекта" title="Окно компиляции проекта">
+    ![Окно компиляции проекта](../pictures/download-project-5.png)
 
 ## Основные операции
 
 ### Запуск
 
 1. Выберете сцену «SampleScene» в меню **Assets -> Scenes**
-    <img src="../pictures/step1.png" alt="Выбор сцены" title="Выбор сцены">
+    ![Выбор сцены](../pictures/step1.png)
 
 2. Запустите проект, нажав кнопку **Play** в верней центральной части среды.
-    <img src="../pictures/step2.png" alt="Запуск" title="Запуск">
+    ![Запуск](../pictures/step1.png)
 
 ### Управление
 
