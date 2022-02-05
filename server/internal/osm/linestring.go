@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/application/handler/api_v1/model"
 	"strconv"
+	"strings"
 )
 
 type Line struct {
@@ -35,34 +36,24 @@ func StrToFloat(str string) (float32, error) {
 	return float32(numb), nil
 }
 
-// Нужно переписать,  кричитно важная по скорости доступа функция
 func LineStringToLine(lineString string) ([]model.Point, error) {
-	lineString = lineString[11:]
+	lineString = lineString[11 : len(lineString)-1]
+	spoints := strings.Split(lineString, ",")
 	var points []model.Point
-	slat, slon := "", ""
-	isLat := true
-	for _, ch := range lineString {
-		if ch != ' ' && ch != ',' && ch != ')' {
-			if isLat {
-				slat += string(ch)
-			} else {
-				slon += string(ch)
-			}
-		} else if ch == ' ' {
-			isLat = false
-		} else if ch == ',' || ch == ')' {
-			lat, err := StrToFloat(slat)
-			if err != nil {
-				return nil, err
-			}
-			lon, err := StrToFloat(slon)
-			if err != nil {
-				return nil, err
-			}
-			points = append(points, model.Point{lat, lon})
-			slat, slon = "", ""
-			isLat = true
+	for _, spoint := range spoints {
+		scoord := strings.Split(spoint, " ")
+		x, err := StrToFloat(scoord[0])
+		if err != nil {
+			return nil, err
 		}
+		y, err := StrToFloat(scoord[1])
+		if err != nil {
+			return nil, err
+		}
+		points = append(points, model.Point{
+			X: x,
+			Y: y,
+		})
 	}
 	return points, nil
 }

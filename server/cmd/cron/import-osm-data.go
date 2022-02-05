@@ -4,46 +4,26 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"flag"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/infrastructure/db"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/osm"
+	file_system "github.com/comptech-winter-school/osm-data-renderer/server/pkg/utils/file-system"
 	"github.com/joho/godotenv"
 	"github.com/qedus/osmpbf"
 	"io"
 	"log"
-	"net/http"
 	"os"
 	"runtime"
 )
 
-func downloadFile(filepath string, url string) (err error) {
-
-	// Create the file
-	out, err := os.Create(filepath)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	// Get the data
-	resp, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	// Writer the body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-const pbfFileName = "kaliningrad-latest.osm.pbf"
-const downloadBaseUrl = "http://download.geofabrik.de/russia/"
-
 func main() {
+	var pbfFileName string
+	var downloadBaseUrl string
+
+	flag.StringVar(&downloadBaseUrl, "base_url", "http://download.geofabrik.de/russia/", "base download url")
+	flag.StringVar(&pbfFileName, "pbf_name", "kaliningrad-latest.osm.pbf", "pbf file name (central-fed-district-latest.osm.pbf for Moscow)")
+	flag.Parse()
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -53,7 +33,7 @@ func main() {
 	defer conn.Close()
 
 	log.Println("Start downloading...")
-	err = downloadFile(os.Getenv("PROTOBUF_PATH")+pbfFileName, downloadBaseUrl+pbfFileName)
+	err = file_system.DownloadFile(os.Getenv("PROTOBUF_PATH")+pbfFileName, downloadBaseUrl+pbfFileName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -93,7 +73,7 @@ func ImportOsmData(store *osm.Storage, pbfFileName string) error {
 		return err
 	}
 
-	nodes := make(map[int64]osm.Point) //Под оптимизацию
+	nodes := make(map[int64]osm.Point)
 
 	for {
 		if v, err := d.Decode(); err == io.EOF {
@@ -103,7 +83,6 @@ func ImportOsmData(store *osm.Storage, pbfFileName string) error {
 		} else {
 			switch v := v.(type) {
 			case *osmpbf.Node:
-				//Под оптимизацию
 				p := osm.Point{
 					X: v.Lat,
 					Y: v.Lon,
