@@ -25,7 +25,7 @@ func NewHandler(storage storage) *Handler {
 	return &Handler{storage: storage}
 }
 
-func ChunkPosToBox(chPos model2.IntPoint) (model2.ChunkBox) {
+func ChunkPosToBox(chPos model2.IntPoint) model2.ChunkBox {
 	return model2.ChunkBox{
 		Min: model2.FloatPoint{
 			X: float32(chPos.X) * model2.ChunkLatSize,
@@ -38,14 +38,10 @@ func ChunkPosToBox(chPos model2.IntPoint) (model2.ChunkBox) {
 	}
 }
 
-func LLToChunkPos(point model2.FloatPoint) (model2.IntPoint) {
-	return model2.IntPoint{}
-}
-
-func GetObjectData(h *Handler, pos model2.IntPoint, rdistance int, cache []model2.CacheInfo) ([]model2.Chunk, error) {
+func GetObjectData(h *Handler, pos model2.IntPoint, loadDistance int, cache []model2.CacheInfo) ([]model2.Chunk, error) {
 	var chunks []model2.Chunk
-	for dx := -rdistance; dx <= rdistance; dx++ {
-		for dy := -rdistance; dy <= rdistance; dy++ {
+	for dx := -loadDistance; dx <= loadDistance; dx++ {
+		for dy := -loadDistance; dy <= loadDistance; dy++ {
 			curChunkPos := model2.IntPoint{
 				X: pos.X + dx,
 				Y: pos.Y + dy,
@@ -110,7 +106,7 @@ func (h *Handler) GetObjects(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}
@@ -130,7 +126,7 @@ func (h *Handler) GetObjects(w http.ResponseWriter, r *http.Request) {
 
 	chunks, err := GetObjectData(h, t.Position, int(t.ChunkLoadingDistance), t.ChunkCache)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}

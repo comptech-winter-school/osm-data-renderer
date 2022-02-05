@@ -7,7 +7,7 @@ import (
 	"flag"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/infrastructure/db"
 	"github.com/comptech-winter-school/osm-data-renderer/server/internal/osm"
-	file_system "github.com/comptech-winter-school/osm-data-renderer/server/pkg/utils/file-system"
+	filesystem "github.com/comptech-winter-school/osm-data-renderer/server/pkg/utils/file-system"
 	"github.com/joho/godotenv"
 	"github.com/qedus/osmpbf"
 	"io"
@@ -16,12 +16,21 @@ import (
 	"runtime"
 )
 
+const (
+	pbfBaseUrlArgName         = "base_url"
+	pbfFilenameArgName        = "pbf_name"
+	pbfDefaultBaseDownloadUrl = "http://download.geofabrik.de/russia/"
+	pbfBaseDownloadUrlUsage   = "base download url"
+	pbfDefaultFileName        = "kaliningrad-latest.osm.pbf"
+	pbfFileNameUsage          = "pbf file name (central-fed-district-latest.osm.pbf for Moscow)"
+)
+
 func main() {
 	var pbfFileName string
 	var downloadBaseUrl string
 
-	flag.StringVar(&downloadBaseUrl, "base_url", "http://download.geofabrik.de/russia/", "base download url")
-	flag.StringVar(&pbfFileName, "pbf_name", "kaliningrad-latest.osm.pbf", "pbf file name (central-fed-district-latest.osm.pbf for Moscow)")
+	flag.StringVar(&downloadBaseUrl, pbfBaseUrlArgName, pbfDefaultBaseDownloadUrl, pbfBaseDownloadUrlUsage)
+	flag.StringVar(&pbfFileName, pbfFilenameArgName, pbfDefaultFileName, pbfFileNameUsage)
 	flag.Parse()
 
 	err := godotenv.Load()
@@ -33,7 +42,7 @@ func main() {
 	defer conn.Close()
 
 	log.Println("Start downloading...")
-	err = file_system.DownloadFile(os.Getenv("PROTOBUF_PATH")+pbfFileName, downloadBaseUrl+pbfFileName)
+	err = filesystem.DownloadFile(os.Getenv("PROTOBUF_PATH")+pbfFileName, downloadBaseUrl+pbfFileName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,10 +60,13 @@ func main() {
 	log.Println("Temp files deleted")
 }
 
-//При необходимости можно взять .osm.pfb файл
-//И скопировать его в папку PROTOBUF_PATH из .env
-//Например по ссылке (~16MB):
-//http://download.geofabrik.de/russia/kaliningrad-latest.osm.pbf
+func InversePolygon(poly []osm.Point) []osm.Point {
+	var invPoly []osm.Point
+	for i := len(poly); i >= 0; i-- {
+		invPoly = append(invPoly, poly[i])
+	}
+	return invPoly
+}
 
 func ImportOsmData(store *osm.Storage, pbfFileName string) error {
 
@@ -105,6 +117,9 @@ func ImportOsmData(store *osm.Storage, pbfFileName string) error {
 						var line []osm.Point
 						for _, element := range v.NodeIDs {
 							line = append(line, nodes[element])
+						}
+						if wayType == "building" {
+							line = InversePolygon(line)
 						}
 						lineString, err := osm.LineToLineString(line)
 						if err != nil {
