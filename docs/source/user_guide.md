@@ -36,15 +36,19 @@ Unity —  межплатформенная среда разработки ко
 Unity с [https://unity3d.com/get-unity/download](https://unity3d.com/ru/get-unity/download):
 
 1. Нажмите **Загрузить Unity Hub**.
+
     ![Сайт с загрузочным файлом Unity Hub](../pictures/download-unityhub-1.png)
 
 2. Выберите .exe файл, который был загружен в вашем браузере.
+
     ![.exe файл в Загрузках браузера](../pictures/download-unityhub-2.png)
 
 3. Прочтите лицензионное соглашение и нажмите **I Agree**, чтобы продолжить.
+
     ![Лицензионное соглашение](../pictures/download-unityhub-3.png)
 
 4. Выберите путь, по которому вы хотите установить программное обеспечение, и нажмите **Install**.
+
     > **Важно:** вы должны установить Hub на диск по умолчанию (где установлена ваша ОС).
 
     ![Выбор пути установки](../pictures/download-unityhub-4.png)
@@ -54,18 +58,23 @@ Unity с [https://unity3d.com/get-unity/download](https://unity3d.com/ru/get-uni
 ### Установка редактора Unity
 
 1. Запустите Unity Hub > нажмите кнопку учетных записей > нажмите **Sign in**.
+
     ![Вход в Unity Hub](../pictures/download-unity-1.png)
 
 2. Нажмите **Installs** в левой части экрана.
+
     ![Выбор меню установки редактора](../pictures/download-unity-2.png)
 
 3. Нажмите синюю кнопку **Install Editor**.
+
     ![download-unity-3](../pictures/download-unity-3.png)
 
 4. Нажмите синюю кнопку **Install** справа от версии редактора, которую вы хотите использовать.
+
     ![Выбор версии редактора](../pictures/download-unity-4.png)
 
 5. Выберите модули, которые вы хотите использовать > нажмите **Install**, чтобы начать процесс установки.
+
     ![Выбор модулей редактора](../pictures/download-unity-5.png)
 
 Вы можете загрузить версии редактора, недоступные в Unity Hub из [Unity Download Archive](https://unity3d.com/get-unity/download/archive?_ga=2.249453703.1816142533.1643890314-1599678641.1643118016).
@@ -75,17 +84,21 @@ Unity с [https://unity3d.com/get-unity/download](https://unity3d.com/ru/get-uni
 Чтобы скачать клиент, перейдите в [репрезиторий Продукта](https://github.com/comptech-winter-school/osm-data-renderer).
 
 1. Нажмите зеленую кнопку **Code**, а затем **Download ZIP**.
+
     ![Скачивание проекта с GitHub](../pictures/download-project-1.png)<
 
 2. Распакуйте архив. Вам понадобится только содержимое директории **client**.
 
 3. Откройте Unity Hub > нажмите кнопку **Open**.
+
     ![download-project-2](../pictures/download-project-2.png)
 
 4. Укажите путь до директории **client** распакованного проекта.
+
     ![Путь до директории client](../pictures/download-project-3.png)
 
 5. В открывшемся проекте нажмите **File -> Build Settings...**.
+
     > **Важно:** во время написания этого руководства Продукт ещё находился в стадии разработки. Во время компиляции
     > проекта могут возникать ошибки или она может вообще не произойти, поэтому этот и последующие шаги необязательны.
     > Вы можете продолжить работу прямо в среде Unity.
@@ -93,6 +106,7 @@ Unity с [https://unity3d.com/get-unity/download](https://unity3d.com/ru/get-uni
     ![Верхнее меню открывшегося проекта](../pictures/download-project-4.png)
 
 6. Выберете целевую платформу > нажмите **Build**.
+
     ![Окно компиляции проекта](../pictures/download-project-5.png)
 
 ## Основные операции
@@ -100,9 +114,11 @@ Unity с [https://unity3d.com/get-unity/download](https://unity3d.com/ru/get-uni
 ### Запуск
 
 1. Выберете сцену «SampleScene» в меню **Assets -> Scenes**
+
     ![Выбор сцены](../pictures/step1.png)
 
 2. Запустите проект, нажав кнопку **Play** в верней центральной части среды.
+
     ![Запуск](../pictures/step1.png)
 
 ### Управление
