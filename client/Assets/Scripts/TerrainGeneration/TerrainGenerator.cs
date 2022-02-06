@@ -11,6 +11,7 @@ namespace TerrainGeneration
     {
         public static float maxHeight = 0.0f;
         public static int chunkSize = 100;
+        private const string HeightMapPath = "heightmap.jpg";
 
         // Start is called before the first frame update
         void Start()
@@ -49,14 +50,17 @@ namespace TerrainGeneration
 
             Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
 
+            Texture2D heightMap = readHeightMap(HeightMapPath);
+
             for (int i = 0, z = 0; z < zSize + 1; z++)
             {
                 for (int x = 0; x < xSize + 1; x++)
                 {
-                    //Color pixel = heightMap.GetPixel(x, z);
+                    Color pixel = heightMap.GetPixel(x, z);
+                    float y = pixel.grayscale * 2;
 
-                    //float y = pixel.grayscale * 2;
-                    float y = 0.0f;
+                    //Debug.Log(y);
+                    //float y = 0.0f;
                     vertices[i] = new Vector3(10*x, y, 10*z);
                     i++;
 
@@ -168,11 +172,11 @@ namespace TerrainGeneration
             return chunks;
         }
 
-        public Texture2D readHeightMap(string name)
+        public static Texture2D readHeightMap(string name)
         {
             Texture2D texture = new Texture2D(128, 128);
 
-            string path = "Resources/" + name;
+            string path = "Resources/heightmap.jpg"; // "Resources /" + name;
             byte[] binaryImageData = File.ReadAllBytes(Path.Combine(Application.dataPath, path));
             texture.LoadImage(binaryImageData);
 

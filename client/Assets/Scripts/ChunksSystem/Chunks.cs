@@ -36,39 +36,36 @@ namespace ChunkSystem
             if (!objectsBuilt)
             {
                 response.generateObjects();
+                TreePlacement.GrowTrees(chunks[4], response);
             }
-
+            bool moved = false;
             if (camera.position.x < chunks[4].transform.position.x)
             {
                 chunks = TerrainGenerator.chunkChange(chunks, Direction.LEFT);
-                //request.position = new Point(camera.position.x, camera.position.z);
-                request.position = Response.convertToWGS84(new Point(camera.position.x, camera.position.z));
-                StartCoroutine(HTTPClient.SendRequest(request));
-                response.generateObjects();
+                moved = true;
             }
             if (camera.position.z > (chunks[4].transform.position.z + TerrainGenerator.chunkSize * 10.0f))
             {
                 chunks = TerrainGenerator.chunkChange(chunks, Direction.FORWARD);
-                //request.position = new Point(camera.position.x, camera.position.z);
-                request.position = Response.convertToWGS84(new Point(camera.position.x, camera.position.z));
-                StartCoroutine(HTTPClient.SendRequest(request));
-                response.generateObjects();
+                moved = true;
             }
             if (camera.position.x > (chunks[4].transform.position.x + TerrainGenerator.chunkSize * 10.0f))
             {
                 chunks = TerrainGenerator.chunkChange(chunks, Direction.RIGHT);
-                //request.position = new Point(camera.position.x, camera.position.z);
-                request.position = Response.convertToWGS84(new Point(camera.position.x, camera.position.z));
-                StartCoroutine(HTTPClient.SendRequest(request));
-                response.generateObjects();
+                moved = true;
             }
             if (camera.position.z < (chunks[4].transform.position.z))
             {
                 chunks = TerrainGenerator.chunkChange(chunks, Direction.BACKWARD);
+                moved = true;
+            }
+            if (moved)
+            {
                 //request.position = new Point(camera.position.x, camera.position.z);
                 request.position = Response.convertToWGS84(new Point(camera.position.x, camera.position.z));
                 StartCoroutine(HTTPClient.SendRequest(request));
                 response.generateObjects();
+                TreePlacement.GrowTrees(chunks[4], response);
             }
         }
 

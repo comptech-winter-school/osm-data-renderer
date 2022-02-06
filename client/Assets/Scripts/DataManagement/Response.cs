@@ -45,7 +45,7 @@ namespace DataManagement
                 for (int j = 0; j < buildings[i].polygon.Length; j++)
                 {
                     buildings[i].polygon[j] = convertToMercator(buildings[i].polygon[j]);
-                    Debug.Log("new coords: " + buildings[i].polygon[j].x + " " + buildings[i].polygon[j].y);
+                    //Debug.Log("new coords: " + buildings[i].polygon[j].x + " " + buildings[i].polygon[j].y);
                 }
                 buildings[i] = new Building(buildings[i].polygon, buildings[i].levels);
                 GenerateBuilding.createBuilding(buildings[i]);
